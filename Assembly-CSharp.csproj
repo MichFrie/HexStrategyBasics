@@ -67,6 +67,7 @@
     <Compile Include="Assets\TerrainGridSystem\Demos\Demo01_TerrainBalls\Demo1.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Utility\MathUtil.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Triangulation\Delaunay\Sweep\DTSweepConstraint.cs" />
+    <Compile Include="Assets\Movement.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\Core\Cell.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Triangulation\Delaunay\Sweep\DTSweepEdgeEvent.cs" />
     <Compile Include="Assets\TerrainGridSystem\Demos\Demo10_TerrainPositioning\Demo10.cs" />
@@ -90,8 +91,10 @@
     <Compile Include="Assets\TerrainGridSystem\Scripts\Geom\PolygonClipping\Polygon.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\Geom\PolygonClipping\SweepEventSet.cs" />
     <Compile Include="Assets\TerrainGridSystem\Demos\Demo14_TerrainPathFinding\Obstacles.cs" />
+    <Compile Include="Assets\Combat.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Triangulation\Delaunay\Sweep\AdvancingFront.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Utility\FixedBitArray3.cs" />
+    <Compile Include="Assets\UnitBehaviour.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Triangulation\Sets\ConstrainedPointSet.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\Geom\Point.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\Snippets\TGSDetectMovement.cs" />
@@ -168,9 +171,7 @@
     <Compile Include="Assets\TerrainGridSystem\Scripts\Geom\Voronoi\Event.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PathFinding\PathFinder.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PathFinding\PathFinderFastIrregular.cs" />
-    <Compile Include="Assets\Movement.cs" />
-    <Compile Include="Assets\Combat.cs" />
-    <Compile Include="Assets\UnitBehaviour.cs" />
+    <Compile Include="Assets\CellBehaviour.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\TerrainGridSystem\Resources\Shaders\UnlitSurfacesColorOverlay.shader" />
@@ -190,6 +191,7 @@
      <None Include="Assets\TerrainGridSystem\Demos\Demo13_TerritoryByTexture\README.txt" />
      <None Include="Assets\TerrainGridSystem\Resources\Shaders\UnlitSingleColorTerritoryThick.shader" />
      <None Include="Assets\TerrainGridSystem\Resources\Shaders\UnlitSingleColorCell.shader" />
+     <None Include="Assets\laxer tree pkg\README.txt" />
      <None Include="Assets\TerrainGridSystem\Demos\Demo17_CellsColorByTexture\README.txt" />
      <None Include="Assets\TerrainGridSystem\Resources\Shaders\NormalsCopy.shader" />
      <None Include="Assets\TerrainGridSystem\Demos\Common\Resources\FruitIcons\README.txt" />

@@ -8,7 +8,6 @@ public class Movement : MonoBehaviour
 {
     TerrainGridSystem tgs;
 
-    //Movement Variables
     Vector3 startPosition, endPosition;
     
     private int endPositionIndex;

@@ -19,6 +19,7 @@ public class Combat : MonoBehaviour
     void Update()
     {
         //CheckWithinMeleeDistance();
+        //RangedAttack();
     }
 
     private void CheckWithinMeleeDistance()
@@ -45,6 +46,22 @@ public class Combat : MonoBehaviour
             distanceValue1 = tgs.CellGetIndex(cell);
             distanceValue2 = tgs.cellLastClickedIndex;
             Debug.Log(tgs.CellGetHexagonDistance(distanceValue1, distanceValue2));
+        }
+    }
+
+    private void RangedAttack()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if(Physics.Raycast(ray, out hit))
+            {
+                if(hit.collider.gameObject.tag == "Confederate")
+                {
+                    Debug.Log("Attack");
+                }
+            }
         }
     }
 }

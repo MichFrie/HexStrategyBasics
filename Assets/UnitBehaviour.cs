@@ -10,6 +10,7 @@ public class UnitBehaviour : MonoBehaviour
 
     //Unit Highlight Materials
     public Material[] materials;
+    public Transform unitPrefab;
 
     private void Start()
     {
@@ -20,8 +21,27 @@ public class UnitBehaviour : MonoBehaviour
     private void Update()
     {
         //SelectedUnitHighlight();
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            ExtendLine();
+        }
     }
 
+    private void OnMouseOver()
+    {
+        //StartCoroutine("ShowToolTip");
+    }
+
+    private void OnMouseExit()
+    {
+        //StopCoroutine("ShowToolTip");
+    }
+
+    private IEnumerator ShowToolTip()
+    {
+        yield return new WaitForSeconds(3);
+        Debug.Log("Tooltip");
+    }
     private void SelectedUnitHighlight()
     {
         if (Input.GetMouseButtonDown(0))
@@ -36,5 +56,11 @@ public class UnitBehaviour : MonoBehaviour
                 GetComponent<Renderer>().material = materials[0];
             }
         }
+    }
+
+    private void ExtendLine()
+    {
+        Transform point = Instantiate(unitPrefab);
+        point.localPosition = transform.position + (Vector3.forward / 2f) * 1.8f;
     }
 }
