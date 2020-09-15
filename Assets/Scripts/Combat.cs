@@ -6,6 +6,7 @@ using TGS;
 public class Combat : MonoBehaviour
 {
     TerrainGridSystem tgs;
+    EnemyBehaviour enemy;
 
     //CheckWithinCombatDistance Variables
     int distanceValue1, distanceValue2;
@@ -13,13 +14,14 @@ public class Combat : MonoBehaviour
     void Start()
     {
         tgs = TerrainGridSystem.instance;
+        enemy = GetComponent<EnemyBehaviour>();
     }
 
 
     void Update()
     {
         //CheckWithinMeleeDistance();
-        //RangedAttack();
+        RangedAttack();
     }
 
     private void CheckWithinMeleeDistance()
@@ -59,7 +61,7 @@ public class Combat : MonoBehaviour
             {
                 if(hit.collider.gameObject.tag == "Confederate")
                 {
-                    Debug.Log("Attack");
+                    
                 }
             }
         }

@@ -62,12 +62,13 @@
     <Compile Include="Assets\TerrainGridSystem\Scripts\Core\RectangleSelection.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Triangulation\Delaunay\Sweep\DTSweep.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\Core\ArrayExtensions.cs" />
+    <Compile Include="Assets\Scripts\EnemyBehaviour.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\TGSPathFinding.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\TerrainGridSystem.cs" />
     <Compile Include="Assets\TerrainGridSystem\Demos\Demo01_TerrainBalls\Demo1.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Utility\MathUtil.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Triangulation\Delaunay\Sweep\DTSweepConstraint.cs" />
-    <Compile Include="Assets\Movement.cs" />
+    <Compile Include="Assets\Scripts\Movement.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\Core\Cell.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Triangulation\Delaunay\Sweep\DTSweepEdgeEvent.cs" />
     <Compile Include="Assets\TerrainGridSystem\Demos\Demo10_TerrainPositioning\Demo10.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Triangulation\TriangulationPoint.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PathFinding\PriorityQueueB.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\Core\TGSPrivPathFinder.cs" />
+    <Compile Include="Assets\Scripts\ScriptableObjectsScripts\Unit.cs" />
     <Compile Include="Assets\TerrainGridSystem\Demos\Demo11_TerritoryConquer\Demo11.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Triangulation\TriangulationAlgorithm.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Triangulation\ITriangulatable.cs" />
@@ -91,16 +93,17 @@
     <Compile Include="Assets\TerrainGridSystem\Scripts\Geom\PolygonClipping\Polygon.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\Geom\PolygonClipping\SweepEventSet.cs" />
     <Compile Include="Assets\TerrainGridSystem\Demos\Demo14_TerrainPathFinding\Obstacles.cs" />
-    <Compile Include="Assets\Combat.cs" />
+    <Compile Include="Assets\Scripts\Combat.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Triangulation\Delaunay\Sweep\AdvancingFront.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Utility\FixedBitArray3.cs" />
-    <Compile Include="Assets\UnitBehaviour.cs" />
+    <Compile Include="Assets\Scripts\UnitBehaviour.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Triangulation\Sets\ConstrainedPointSet.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\Geom\Point.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\Snippets\TGSDetectMovement.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Triangulation\Util\PointGenerator.cs" />
     <Compile Include="Assets\TerrainGridSystem\Demos\Demo17_CellsColorByTexture\Demo17.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PathFinding\PathFinderFastNonSQR.cs" />
+    <Compile Include="Assets\Scripts\ScriptableObjectsScripts\UnitCreation.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\Core\IAdmin.cs" />
     <Compile Include="Assets\TerrainGridSystem\Demos\Demo01_TerrainBalls\BallController.cs" />
     <Compile Include="Assets\TerrainGridSystem\Demos\Demo15_RuntimeGridCreation\Demo15.cs" />
@@ -123,6 +126,7 @@
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Triangulation\Delaunay\Sweep\PointOnEdgeException.cs" />
     <Compile Include="Assets\TerrainGridSystem\Demos\Demo18_ProgressiveZoom\ZoomManager.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PathFinding\IPathFinder.cs" />
+    <Compile Include="Assets\Scripts\CellBehaviour.cs" />
     <Compile Include="Assets\TerrainGridSystem\Demos\Demo06_CellsPositions\Demo6.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PathFinding\PathFinderFast.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\TGSConfig.cs" />
@@ -153,6 +157,7 @@
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Triangulation\Polygon\PolygonSet.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\Snippets\TGSSnippetBase.cs" />
     <Compile Include="Assets\TerrainGridSystem\Demos\Demo20_RectangleSelection\Demo20.cs" />
+    <Compile Include="Assets\Scripts\ScriptableObjectsScripts\AttackTest.cs" />
     <Compile Include="Assets\TerrainGridSystem\Demos\Demo21_PixelBackground\Demo21.cs" />
     <Compile Include="Assets\TerrainGridSystem\Demos\Common\GUIResizer.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Utility\Point2D.cs" />
@@ -163,6 +168,7 @@
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Triangulation\Util\TriangulationUtil.cs" />
     <Compile Include="Assets\TerrainGridSystem\Demos\Demo06b_CellsPositions2\Demo6b.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Utility\FixedArray3.cs" />
+    <Compile Include="Assets\Scripts\ScriptableObjectsScripts\UnitStats.cs" />
     <Compile Include="Assets\TerrainGridSystem\Demos\Demo12_PathFinding\Demo12.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\TGSTerritories.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PolyTri\Triangulation\Polygon\PolygonUtil.cs" />
@@ -171,7 +177,7 @@
     <Compile Include="Assets\TerrainGridSystem\Scripts\Geom\Voronoi\Event.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PathFinding\PathFinder.cs" />
     <Compile Include="Assets\TerrainGridSystem\Scripts\PathFinding\PathFinderFastIrregular.cs" />
-    <Compile Include="Assets\CellBehaviour.cs" />
+    <Compile Include="Assets\Scripts\CameraMovement.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\TerrainGridSystem\Resources\Shaders\UnlitSurfacesColorOverlay.shader" />
@@ -191,7 +197,6 @@
      <None Include="Assets\TerrainGridSystem\Demos\Demo13_TerritoryByTexture\README.txt" />
      <None Include="Assets\TerrainGridSystem\Resources\Shaders\UnlitSingleColorTerritoryThick.shader" />
      <None Include="Assets\TerrainGridSystem\Resources\Shaders\UnlitSingleColorCell.shader" />
-     <None Include="Assets\laxer tree pkg\README.txt" />
      <None Include="Assets\TerrainGridSystem\Demos\Demo17_CellsColorByTexture\README.txt" />
      <None Include="Assets\TerrainGridSystem\Resources\Shaders\NormalsCopy.shader" />
      <None Include="Assets\TerrainGridSystem\Demos\Common\Resources\FruitIcons\README.txt" />

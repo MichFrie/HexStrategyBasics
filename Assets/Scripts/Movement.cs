@@ -104,22 +104,26 @@ public class Movement : MonoBehaviour
 
     private void ShowLineOfSight(int targetCellIndex)
     {
-        if (isSelectingStart)
-            return;
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            if (isSelectingStart)
+                return;
 
-        DestroyLOSMarkers();
+            DestroyLOSMarkers();
 
-        //Compute LOS and get list of cell indices and world positions
-        bool isLOS = tgs.CellGetLineOfSight(startCellIndex, targetCellIndex, ref cellIndices, ref worldPositions);
+            //Compute LOS and get list of cell indices and world positions
+            bool isLOS = tgs.CellGetLineOfSight(startCellIndex, targetCellIndex, ref cellIndices, ref worldPositions);
 
-        //Add small dots along the LOS
-        worldPositions.ForEach((Vector3 obj) => {
-            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            LOSMarkers.Add(sphere);
-            sphere.transform.position = obj;
-            sphere.transform.localScale = Vector3.one * 0.2f;
-            sphere.GetComponent<Renderer>().material.color = isLOS ? Color.green : Color.red;
-        });
+            //Add small dots along the LOS
+            worldPositions.ForEach((Vector3 obj) => {
+                GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                LOSMarkers.Add(sphere);
+                sphere.transform.position = obj;
+                sphere.transform.localScale = Vector3.one * 0.2f;
+                sphere.GetComponent<Renderer>().material.color = isLOS ? Color.green : Color.red;
+            });
+        }
+       
     }
 
     private void DestroyLOSMarkers()
