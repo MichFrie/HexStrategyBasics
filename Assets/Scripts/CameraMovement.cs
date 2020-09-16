@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CameraMovement : MonoBehaviour
 {
@@ -62,6 +63,7 @@ public class CameraMovement : MonoBehaviour
         transform.position += move;
 
         getCameraRotation();
+
     }
 
     void getCameraRotation()
@@ -81,5 +83,6 @@ public class CameraMovement : MonoBehaviour
         transform.rotation *= Quaternion.Euler(new Vector3(0, dx, 0));
         transform.GetChild(0).transform.rotation *= Quaternion.Euler(new Vector3(-dy, 0, 0));
     }
+
 }
 
