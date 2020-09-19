@@ -19,7 +19,6 @@ public class CellBehaviour : MonoBehaviour
             if(tgs.CellGetTexture(cellIndex) == tgs.textures[1]){
                
                 tgs.CellSetCrossCost(cellIndex, 2);
-                
             }
         }
         

@@ -7,6 +7,8 @@ public class Combat : MonoBehaviour
 {
     TerrainGridSystem tgs;
     EnemyBehaviour enemy;
+    public UnitStats unitStats;
+    public int strength;
 
     //CheckWithinCombatDistance Variables
     int distanceValue1, distanceValue2;
@@ -61,7 +63,8 @@ public class Combat : MonoBehaviour
             {
                 if(hit.collider.gameObject.tag == "Confederate")
                 {
-                    
+                    Debug.Log("Attack successful");
+                    hit.transform.GetComponent<Combat>().unitStats.strength -= 100;
                 }
             }
         }
