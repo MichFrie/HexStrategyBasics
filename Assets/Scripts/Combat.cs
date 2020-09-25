@@ -6,7 +6,6 @@ using TGS;
 public class Combat : MonoBehaviour
 {
     TerrainGridSystem tgs;
-    EnemyBehaviour enemy;
     public UnitStats unitStats;
     public int strength;
 
@@ -16,7 +15,7 @@ public class Combat : MonoBehaviour
     void Start()
     {
         tgs = TerrainGridSystem.instance;
-        enemy = GetComponent<EnemyBehaviour>();
+      
     }
 
 
@@ -26,6 +25,13 @@ public class Combat : MonoBehaviour
         RangedAttack();
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Enemy")
+        {
+            Debug.Log("Lets attack");
+        }
+    }
     private void CheckWithinMeleeDistance()
     {
         if (Input.GetMouseButtonDown(1))

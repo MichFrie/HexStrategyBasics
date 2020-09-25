@@ -9,18 +9,18 @@ public class UnitBehaviour : MonoBehaviour
     TerrainGridSystem tgs;
 
     //Unit Highlight Materials
-    public Material[] materials;
+    
     public Transform unitPrefab;
 
     private void Start()
     {
         tgs = TerrainGridSystem.instance;
-        materials = new Material[2];
+       
     }
 
     private void Update()
     {
-        //SelectedUnitHighlight();
+        
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             ExtendLine();
@@ -41,21 +41,6 @@ public class UnitBehaviour : MonoBehaviour
     {
         yield return new WaitForSeconds(3);
         Debug.Log("Tooltip");
-    }
-    private void SelectedUnitHighlight()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray))
-            {
-                GetComponent<Renderer>().material = materials[1];
-            }
-            else
-            {
-                GetComponent<Renderer>().material = materials[0];
-            }
-        }
     }
 
     private void ExtendLine()

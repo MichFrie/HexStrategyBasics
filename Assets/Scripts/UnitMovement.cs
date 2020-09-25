@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TGS;
+using System;
 
 public class UnitMovement : MonoBehaviour
 {
@@ -25,15 +26,18 @@ public class UnitMovement : MonoBehaviour
     Vector3 startPosition, endPosition;
 
     bool isSelectingStart;
+    bool unitSelected;
 
     List<int> moveList;
     List<int> cellIndices;
     List<Vector3> worldPositions;
     List<GameObject> LOSMarkers;
 
+    Component[] units;
+
     private void Awake()
     {
-        PositionUnitInCenterOfCell();
+ 
     }
 
     void Start()
@@ -49,11 +53,52 @@ public class UnitMovement : MonoBehaviour
     void Update()
     {
 
-        if (Input.GetKeyDown(KeyCode.L))
+        if (Input.GetKeyDown(KeyCode.M))
             ShowRange(true);
         if (Input.GetKeyDown(KeyCode.R))
             ShowRange(false);
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            RotateLeft();
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            RotateRight();
+        }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            FormLine();
+        }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            FormColumn();
+        }
+        MoveSelectedUnit();
+       
+    }
 
+    private void FormLine()
+    {
+        transform.localScale = new Vector3(0.2f, 0.2f, 0.7f);
+    }
+
+    private void FormColumn()
+    {
+        transform.localScale = new Vector3(0.7f, 0.2f, 0.2f);
+    }
+
+    private void RotateRight()
+    {
+        transform.rotation *= Quaternion.Euler(0, 60, 0);
+    }
+
+    private void RotateLeft()
+    {
+        transform.rotation *= Quaternion.Euler(0, -60, 0);
+    }
+
+    public void MoveSelectedUnit()
+    {
         // Check Unit state
         switch (state)
         {
@@ -74,18 +119,18 @@ public class UnitMovement : MonoBehaviour
 
             case State.MOVESELECT:
                 if (Input.GetMouseButtonUp(0))
-                {                   //gets path when left mouse is released
+                {   //gets path when left mouse is released
                     int t_cell = tgs.cellHighlightedIndex;
-                    tgs.CellFadeOut(t_cell, Color.red, 50);
+                    //tgs.CellFadeOut(t_cell, Color.red, 50);
                     if (t_cell != -1)
-                    {              //checks if cell is selected
+                    {//checks if cell is selected
                         int startCell = tgs.CellGetIndex(tgs.CellGetAtPosition(transform.position, true));
                         float totalCost;
                         moveList = tgs.FindPath(startCell, t_cell, out totalCost);
                         if (moveList == null)
                             return;
                         Debug.Log("Cell Clicked: " + t_cell + ", Total move cost: " + totalCost);
-                        tgs.CellFadeOut(moveList, Color.green, 5f);
+                        //tgs.CellFadeOut(moveList, Color.green, 5f);
                         moveCounter = 0;
                         state = State.MOVING;
                     }
@@ -103,7 +148,7 @@ public class UnitMovement : MonoBehaviour
         float speed = moveList.Count * 5f;
         float step = speed * Time.deltaTime;
 
-        // target position must account the sphere height since the cellGetPosition will return the center of the cell which is at floor.
+        // target position must account for cube height since the cellGetPosition will return the center of the cell which is at floor.
         in_vec.y += transform.localScale.y * 0.5f;
         transform.position = Vector3.MoveTowards(transform.position, in_vec, step);
 
@@ -113,17 +158,6 @@ public class UnitMovement : MonoBehaviour
         if (dist <= 0.1f)
         {
             moveCounter++;
-        }
-    }
-
-    void PositionUnitInCenterOfCell()
-    {
-        if (Input.GetKey(KeyCode.P))
-        {
-            int lastCell = tgs.cellLastClickedIndex;
-            Bounds bounds = tgs.CellGetRectWorldSpace(lastCell);
-            Debug.Log(bounds.center);
-            transform.position = bounds.center;
         }
     }
 
@@ -137,14 +171,14 @@ public class UnitMovement : MonoBehaviour
         {
             //Select start cell
             startCellIndex = clickedCellIndex;
-            tgs.CellToggleRegionSurface(startCellIndex, true, Color.yellow);
+            //tgs.CellToggleRegionSurface(startCellIndex, true, Color.yellow);
         }
         else
         {
             //End cell clicked, will show path
             //First color of start cell will be cleared
 
-            tgs.CellToggleRegionSurface(startCellIndex, true, Color.yellow);
+            //tgs.CellToggleRegionSurface(startCellIndex, true, Color.yellow);
 
             //Get Path
             List<int> path = tgs.FindPath(startCellIndex, clickedCellIndex, 0, 0, 1);
