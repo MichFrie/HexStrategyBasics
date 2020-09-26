@@ -13,7 +13,15 @@ public class UnitMovement : MonoBehaviour
         MOVESELECT
     }
 
+    enum Formation
+    {
+        IDLE,
+        LINE,
+        COLUMN
+    }
+
     State state;
+    Formation formation;
     
     TerrainGridSystem tgs;
     
@@ -22,6 +30,8 @@ public class UnitMovement : MonoBehaviour
     int endPositionIndex;
     int startCellIndex;
     int HighlightRange = 2;
+    
+    float unitMovementPoints = 10;
 
     Vector3 startPosition, endPosition;
 
@@ -44,6 +54,7 @@ public class UnitMovement : MonoBehaviour
     {
         tgs = TerrainGridSystem.instance;
         state = State.MOVESELECT;
+        formation = Formation.IDLE;
         isSelectingStart = true;
         tgs.OnCellClick += (grid, cellIndex, buttonIndex) => BuildPath(cellIndex);
         tgs.OnCellEnter += (grid, cellIndex) => ShowLineOfSight(cellIndex);
@@ -73,18 +84,21 @@ public class UnitMovement : MonoBehaviour
         {
             FormColumn();
         }
-        MoveSelectedUnit();
-       
+        MoveSelectedUnit(); 
     }
 
     private void FormLine()
     {
         transform.localScale = new Vector3(0.2f, 0.2f, 0.7f);
+        formation = Formation.LINE;
+        unitMovementPoints -= 2f;
     }
 
     private void FormColumn()
     {
         transform.localScale = new Vector3(0.7f, 0.2f, 0.2f);
+        formation = Formation.COLUMN;
+        unitMovementPoints -= 2f;
     }
 
     private void RotateRight()
@@ -119,20 +133,30 @@ public class UnitMovement : MonoBehaviour
 
             case State.MOVESELECT:
                 if (Input.GetMouseButtonUp(0))
-                {   //gets path when left mouse is released
-                    int t_cell = tgs.cellHighlightedIndex;
-                    //tgs.CellFadeOut(t_cell, Color.red, 50);
-                    if (t_cell != -1)
+                {   //definition of target cell
+                    int targetCell = tgs.cellHighlightedIndex;
+                    if (targetCell != -1)
                     {//checks if cell is selected
                         int startCell = tgs.CellGetIndex(tgs.CellGetAtPosition(transform.position, true));
                         float totalCost;
-                        moveList = tgs.FindPath(startCell, t_cell, out totalCost);
+                        //builds a path from startCell to targetCell
+                        moveList = tgs.FindPath(startCell, targetCell, out totalCost);
                         if (moveList == null)
                             return;
-                        Debug.Log("Cell Clicked: " + t_cell + ", Total move cost: " + totalCost);
-                        //tgs.CellFadeOut(moveList, Color.green, 5f);
-                        moveCounter = 0;
-                        state = State.MOVING;
+                        Debug.Log("Cell Clicked: " + targetCell + ", Total move cost: " + totalCost);   
+                        //check if path exceeds unitRange
+                        if(moveList.Count < CalculateUnitMovementPoints())
+                        {
+                            moveCounter = 0;
+                            state = State.MOVING;
+                            unitMovementPoints -= totalCost;
+                            Debug.Log("UnitMovementPoints: " + unitMovementPoints);
+                        }
+                        else
+                        {
+                            Debug.Log("Movement Range exceeded");
+                        }
+
                     }
                     else
                     {
@@ -141,6 +165,22 @@ public class UnitMovement : MonoBehaviour
                 }
                 break;
         }
+    }
+
+    float CalculateUnitMovementPoints()
+    {
+        if (formation == Formation.COLUMN)
+        {
+            unitMovementPoints *= 2f;
+            formation = Formation.IDLE;
+            return unitMovementPoints;
+        }
+
+        else
+        {
+            formation = Formation.IDLE;
+            return unitMovementPoints;
+        }     
     }
 
     void Move(Vector3 in_vec)
@@ -152,8 +192,7 @@ public class UnitMovement : MonoBehaviour
         in_vec.y += transform.localScale.y * 0.5f;
         transform.position = Vector3.MoveTowards(transform.position, in_vec, step);
 
-        // Check if character has reached next cell (we use a small threshold to avoid floating point comparison; also we check only xz plane since the character y position could be adjusted or limited
-        // by the slope of the terrain).
+        // Check if character has reached next cell
         float dist = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(in_vec.x, in_vec.z));
         if (dist <= 0.1f)
         {
@@ -171,7 +210,6 @@ public class UnitMovement : MonoBehaviour
         {
             //Select start cell
             startCellIndex = clickedCellIndex;
-            //tgs.CellToggleRegionSurface(startCellIndex, true, Color.yellow);
         }
         else
         {
@@ -195,20 +233,20 @@ public class UnitMovement : MonoBehaviour
         isSelectingStart = !isSelectingStart;
     }
 
-    private void InstantMovement()
-    {
-        if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray))
-            {
-                startPosition = transform.position;
-                endPositionIndex = tgs.cellLastClickedIndex;
-                endPosition = tgs.CellGetPosition(endPositionIndex);
-                transform.position = endPosition;
-            }
-        }
-    }
+    //private void InstantMovement()
+    //{
+    //    if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0))
+    //    {
+    //        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    //        if (Physics.Raycast(ray))
+    //        {
+    //            startPosition = transform.position;
+    //            endPositionIndex = tgs.cellLastClickedIndex;
+    //            endPosition = tgs.CellGetPosition(endPositionIndex);
+    //            transform.position = endPosition;
+    //        }
+    //    }
+    //}
 
     private void ShowRange(bool useLineOfSight = false)
     {
