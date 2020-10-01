@@ -61,7 +61,7 @@ public class Combat : MonoBehaviour
 
     private void RangedAttack()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) && CheckLineOfSight())
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -73,6 +73,25 @@ public class Combat : MonoBehaviour
                     hit.transform.GetComponent<Combat>().unitStats.strength -= 100;
                 }
             }
+        }
+    }
+
+    bool CheckLineOfSight()
+    {
+        int layerMask = 1 << 8;
+        layerMask = ~layerMask;
+
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.right), out hit, 6f, layerMask))
+        {
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.right) * hit.distance, Color.yellow);
+            Debug.Log("Did Hit");
+            return true;
+        }
+        else
+        {
+            Debug.Log("Did not Hit");
+            return false;
         }
     }
 }

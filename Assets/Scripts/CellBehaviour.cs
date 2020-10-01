@@ -11,21 +11,16 @@ public class CellBehaviour : MonoBehaviour
 
     void Start()
     {
-        tgs = TerrainGridSystem.instance;
-        allCells = tgs.cells;
-        foreach(Cell cell in allCells)
-        {
-            int cellIndex = tgs.CellGetIndex(cell);
-            if(tgs.CellGetTexture(cellIndex) == tgs.textures[1]){
-               
-                tgs.CellSetCrossCost(cellIndex, 2);
-            }
-        }
-        
+        tgs = TerrainGridSystem.instance;        
     }
 
     void Update()
     {
-        
+
+    //old code, just use as reference
+    //if(tgs.CellGetTexture(cellIndex) == tgs.textures[1]){
+
+    //       tgs.CellSetCrossCost(cellIndex, 2);
+    //    }
     }
 }

@@ -27,28 +27,17 @@ public class UnitMovement : MonoBehaviour
     
     short moveCounter;
     
-    int endPositionIndex;
     int startCellIndex;
-    int HighlightRange = 2;
-    
+        
     float unitMovementPoints = 10;
 
-    Vector3 startPosition, endPosition;
-
     bool isSelectingStart;
-    bool unitSelected;
-
+    
     List<int> moveList;
     List<int> cellIndices;
     List<Vector3> worldPositions;
     List<GameObject> LOSMarkers;
 
-    Component[] units;
-
-    private void Awake()
-    {
- 
-    }
 
     void Start()
     {
@@ -57,7 +46,7 @@ public class UnitMovement : MonoBehaviour
         formation = Formation.IDLE;
         isSelectingStart = true;
         tgs.OnCellClick += (grid, cellIndex, buttonIndex) => BuildPath(cellIndex);
-        tgs.OnCellEnter += (grid, cellIndex) => ShowLineOfSight(cellIndex);
+        //tgs.OnCellEnter += (grid, cellIndex) => ShowLineOfSight(cellIndex);
 
     }
 
@@ -89,14 +78,14 @@ public class UnitMovement : MonoBehaviour
 
     private void FormLine()
     {
-        transform.localScale = new Vector3(0.2f, 0.2f, 0.7f);
+        transform.localScale = new Vector3(0.2f, 0.2f, 1f);
         formation = Formation.LINE;
         unitMovementPoints -= 2f;
     }
 
     private void FormColumn()
     {
-        transform.localScale = new Vector3(0.7f, 0.2f, 0.2f);
+        transform.localScale = new Vector3(0.7f, 0.2f, 0.7f);
         formation = Formation.COLUMN;
         unitMovementPoints -= 2f;
     }
@@ -233,56 +222,38 @@ public class UnitMovement : MonoBehaviour
         isSelectingStart = !isSelectingStart;
     }
 
-    //private void InstantMovement()
-    //{
-    //    if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0))
-    //    {
-    //        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    //        if (Physics.Raycast(ray))
-    //        {
-    //            startPosition = transform.position;
-    //            endPositionIndex = tgs.cellLastClickedIndex;
-    //            endPosition = tgs.CellGetPosition(endPositionIndex);
-    //            transform.position = endPosition;
-    //        }
-    //    }
-    //}
-
     private void ShowRange(bool useLineOfSight = false)
     {
-        List<int> neighbours = tgs.CellGetNeighbours(tgs.cellHighlightedIndex, HighlightRange);
+        List<int> neighbours = tgs.CellGetNeighbours(tgs.cellLastClickedIndex,(int)unitMovementPoints - 1);
         if (neighbours != null)
         {
             if (useLineOfSight)
             {
                 tgs.CellTestLineOfSight(tgs.cellHighlightedIndex, neighbours);
             }
-            tgs.CellFlash(neighbours, Color.yellow, 1f);
+            tgs.CellFlash(neighbours, Color.yellow, 5f);
         }
     }
 
 
     private void ShowLineOfSight(int targetCellIndex)
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            if (isSelectingStart)
-                return;
+        if (isSelectingStart)
+            return;
 
-            DestroyLOSMarkers();
+        DestroyLOSMarkers();
 
-            //Compute LOS and get list of cell indices and world positions
-            bool isLOS = tgs.CellGetLineOfSight(startCellIndex, targetCellIndex, ref cellIndices, ref worldPositions);
+        //Compute LOS and get list of cell indices and world positions
+        bool isLOS = tgs.CellGetLineOfSight(startCellIndex, targetCellIndex, ref cellIndices, ref worldPositions);
 
-            //Add small dots along the LOS
-            worldPositions.ForEach((Vector3 obj) => {
-                GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                LOSMarkers.Add(sphere);
-                sphere.transform.position = obj;
-                sphere.transform.localScale = Vector3.one * 0.2f;
-                sphere.GetComponent<Renderer>().material.color = isLOS ? Color.green : Color.red;
-            });
-        }
+        //Add small dots along the LOS
+        worldPositions.ForEach((Vector3 obj) => {
+            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            LOSMarkers.Add(sphere);
+            sphere.transform.position = obj;
+            sphere.transform.localScale = Vector3.one * 0.2f;
+            sphere.GetComponent<Renderer>().material.color = isLOS ? Color.green : Color.red;
+        });
 
     }
 
