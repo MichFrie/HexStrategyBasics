@@ -23,7 +23,7 @@ public class UnitBehaviour : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            ExtendLine();
+            //ExtendLine();
         }
     }
 

@@ -7,7 +7,7 @@ public class CameraMovement : MonoBehaviour
 {
     float speed = 0.05f;
     float zoomSpeed = 5.0f;
-    float rotateSpeed = 0.5f;
+    float rotateSpeed = 0.2f;
 
     float minHeight = 4;
     float maxHeight = 40;
@@ -15,7 +15,7 @@ public class CameraMovement : MonoBehaviour
     Vector2 p1;
     Vector2 p2;
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {

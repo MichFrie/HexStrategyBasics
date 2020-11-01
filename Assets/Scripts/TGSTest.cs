@@ -13,12 +13,10 @@ public class TGSTest : MonoBehaviour
     private Vector3 unitPosition;
     private Vector3 playerToTargetDirection;
     TerrainGridSystem tgs;
-    // Start is called before the first frame update
-
     void Start()
     {
         tgs = TerrainGridSystem.instance;
-       
+
     }
 
     private void Update()
@@ -26,7 +24,6 @@ public class TGSTest : MonoBehaviour
         mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         unitPosition = this.transform.position;
-        //unitPosition = GameObject.FindGameObjectWithTag("Player").transform.position;
         playerToTargetDirection = hit.point - unitPosition;
 
         if (Physics.Raycast(mouseRay.origin, mouseRay.direction, out hit))
@@ -51,36 +48,4 @@ public class TGSTest : MonoBehaviour
         }
     }
 }
-
-
-
-
-
-
-    //void FixedUpdate()
-    //{
-    //    LineOfSight();
-    //}
-
-    //void LineOfSight()
-    //{
-    //    int layerMask = 1 << 8;
-    //    RaycastHit[] hits;
-    //    layerMask = ~layerMask;
-    //    hits = Physics.RaycastAll(transform.position, transform.right, 6f, layerMask);
-
-    //    for (int i = 0; i < hits.Length; i++)
-    //    { 
-    //        RaycastHit hit = hits[i];
-    //        //Debug.Log(hit.transform.gameObject.name);
-    //        if(hit.transform.gameObject.tag == "Enemy")
-    //        {
-    //            //Debug.Log("Enemy");
-    //        }
-    //        else if(hit.transform.gameObject.tag == "Obstacle")
-    //        {
-    //            //Debug.Log("Obstacle");
-    //        }
-    //    }
-    //}
 

@@ -8,6 +8,17 @@ public class Combat : MonoBehaviour
     TerrainGridSystem tgs;
     public UnitStats unitStats;
     public int strength;
+    
+    private Ray mouseRay;
+    
+    private RaycastHit hit;
+    private RaycastHit targetRayHit;
+    
+    private Vector3 unitPosition;
+    private Vector3 playerToTargetDirection;
+
+    private float unitMaxFOVangle = 45f;
+    private float viewRadius = 5f;
 
     //CheckWithinCombatDistance Variables
     int distanceValue1, distanceValue2;
@@ -15,7 +26,7 @@ public class Combat : MonoBehaviour
     void Start()
     {
         tgs = TerrainGridSystem.instance;
-      
+
     }
 
 
@@ -23,15 +34,9 @@ public class Combat : MonoBehaviour
     {
         //CheckWithinMeleeDistance();
         RangedAttack();
+        MeasureDistanceFromPlayer();
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "Enemy")
-        {
-            Debug.Log("Lets attack");
-        }
-    }
     private void CheckWithinMeleeDistance()
     {
         if (Input.GetMouseButtonDown(1))
@@ -43,7 +48,7 @@ public class Combat : MonoBehaviour
             if (tgs.CellGetHexagonDistance(distanceValue1, distanceValue2) == 1)
                 Debug.Log("Melee Combat Enabled");
             else
-                Debug.Log("Error");
+                Debug.Log("Too far away for Melee Combat");
         }
     }
     private void MeasureDistanceFromPlayer()
@@ -65,33 +70,59 @@ public class Combat : MonoBehaviour
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if(Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit))
             {
-                if(hit.collider.gameObject.tag == "Confederate")
+                if (hit.collider.gameObject.tag == "Enemy")
                 {
-                    Debug.Log("Attack successful");
+                    Debug.Log("initiating Ranged Attack");
                     hit.transform.GetComponent<Combat>().unitStats.strength -= 100;
                 }
             }
         }
     }
 
-    bool CheckLineOfSight()
+    private bool CheckLineOfSight()
     {
-        int layerMask = 1 << 8;
-        layerMask = ~layerMask;
+        mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.right), out hit, 6f, layerMask))
+        unitPosition = this.transform.position;
+        playerToTargetDirection = hit.point - unitPosition;
+        Vector3 currentViewRadius = this.gameObject.transform.right * viewRadius; 
+
+        if (Physics.Raycast(mouseRay.origin, mouseRay.direction, out hit))
         {
-            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.right) * hit.distance, Color.yellow);
-            Debug.Log("Did Hit");
-            return true;
+            float angleBetweenUnits = Vector3.Angle(this.gameObject.transform.position - hit.collider.transform.position, currentViewRadius);
+            Debug.Log(angleBetweenUnits);
+            if(angleBetweenUnits < unitMaxFOVangle)
+            {
+                //if (Input.GetMouseButtonDown(1))
+                //{
+                    Debug.Log(targetRayHit);
+                    if (Physics.SphereCast(unitPosition, 1f, playerToTargetDirection.normalized, out targetRayHit, 6f))
+                    {
+                        if (targetRayHit.collider.gameObject.tag == "Enemy")
+                        {
+                            Debug.DrawRay(unitPosition, playerToTargetDirection.normalized * targetRayHit.distance, Color.yellow);
+                            Debug.Log("Attack");
+                            return true;
+
+                        }
+                        else
+                        {
+                            Debug.Log("No attack possible");
+                            return false;
+                        }
+                    }
+                    Debug.Log("Out of sight");
+                    return false;
+                    //Debug.DrawRay(unitPosition, playerToTargetDirection.normalized * 5, Color.white);
+                    //Debug.DrawRay(mouseRay.origin, mouseRay.direction * 50, Color.red);
+                //}
+             
+                //return false;
+            }
+            
         }
-        else
-        {
-            Debug.Log("Did not Hit");
-            return false;
-        }
+        return false;
     }
 }

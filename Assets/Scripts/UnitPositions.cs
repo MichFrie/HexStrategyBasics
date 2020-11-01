@@ -14,7 +14,7 @@ public class UnitPositions : MonoBehaviour
         PositionUnitInCenterOfCell();
            }
 
-    void PositionUnitInCenterOfCell()
+    public void PositionUnitInCenterOfCell()
     {
         Cell cell = tgs.CellGetAtPosition(transform.position,true);
         int cellIndex = tgs.CellGetIndex(cell);

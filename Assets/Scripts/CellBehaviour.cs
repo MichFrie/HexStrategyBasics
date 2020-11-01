@@ -9,18 +9,24 @@ public class CellBehaviour : MonoBehaviour
     TerrainGridSystem tgs;
     List<Cell> allCells;
 
+
     void Start()
     {
-        tgs = TerrainGridSystem.instance;        
+        tgs = TerrainGridSystem.instance;
+        InitialCellBehaviour();
     }
 
-    void Update()
+    private void InitialCellBehaviour()
     {
-
-    //old code, just use as reference
-    //if(tgs.CellGetTexture(cellIndex) == tgs.textures[1]){
-
-    //       tgs.CellSetCrossCost(cellIndex, 2);
-    //    }
+        allCells = tgs.cells;
+        foreach (Cell cell in allCells)
+        {
+            int cellIndex = tgs.CellGetIndex(cell);
+            if (tgs.CellGetTexture(cellIndex) == tgs.textures[1])
+            {
+                tgs.CellSetCrossCost(cellIndex, 2);
+            }
+            tgs.CellToggleRegionSurface(cellIndex, false, tgs.textures[1]);
+        }
     }
 }
