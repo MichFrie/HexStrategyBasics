@@ -134,7 +134,7 @@ public class UnitMovement : MonoBehaviour
                         if (moveList == null)
                             return;
 
-                        Debug.Log("Cell Clicked: " + targetCell + ", Total move cost: " + totalCost);
+                        //Debug.Log("Cell Clicked: " + targetCell + ", Total move cost: " + totalCost);
 
                         //check if path exceeds unitRange
                         if (moveList.Count < CalculateUnitMovementPoints())

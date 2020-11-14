@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 
@@ -11,7 +12,6 @@ public class UnitSelection : MonoBehaviour
         GetComponent<UnitMovement>().enabled = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
         SelectUnit();
@@ -25,22 +25,29 @@ public class UnitSelection : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit))
             {
-                Debug.Log(hit.transform.gameObject.name);
                 hit.transform.gameObject.GetComponent<UnitMovement>().enabled = true;
-                Debug.Log("Unit Enabled");
             }
         }
         if (Input.GetMouseButtonDown(1))
         {
-            //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            //RaycastHit hit;
-            //if (Physics.Raycast(ray, out hit))
-            //{
-            //    Debug.Log(hit.transform.gameObject.name);
-            //    hit.transform.gameObject.GetComponent<UnitMovement>().enabled = false;
-            //    Debug.Log("Unit Disabled");
-            //}
             GetComponent<UnitMovement>().enabled = false;
         }
     }
 }
+
+
+
+
+
+
+
+//Legacy Code
+
+//OLD METHOD FOR UNIT SELECTION
+//Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+//RaycastHit hit;
+//if (Physics.Raycast(ray, out hit))
+//{
+//    if ((hit.collider.gameObject.tag == "Enemy") || hit.collider.gameObject.tag == "Unit")
+//        return;
+//}
