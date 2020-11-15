@@ -1,26 +1,30 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using TGS;
 using UnityEngine;
-using TGS;
 
 public class Combat : MonoBehaviour
 {
     TerrainGridSystem tgs;
     public UnitStats unitStats;
-    
+
     public int strength;
     private int distanceValue1;
     private int distanceValue2;
 
     private Ray mouseRay;
-    
+
     private RaycastHit hit;
     private RaycastHit targetRayHit;
-    
+
     private Vector3 unitPosition;
     private Vector3 playerToTargetDirection;
 
+    private Quaternion unitRotation;
 
+    //public float radiant1 = 1.7f;
+    //float radiant2 = 0.55f;
+    //float radiant3 = 90f;
+
+    float[] radiantArray = new float[]{ 0.55f, 1.28f, 1.7f, 2.56f, 90f };
     void Start()
     {
         tgs = TerrainGridSystem.instance;
@@ -31,11 +35,11 @@ public class Combat : MonoBehaviour
     void Update()
     {
         //CheckWithinMeleeDistance();
-        RangedAttack();
+        //RangedAttack();
         //MeasureDistanceFromPlayer();
-        CheckLineOfSight();
-        
-        
+        //CheckLineOfSight();
+
+
     }
 
     private void CheckWithinMeleeDistance()
@@ -66,42 +70,48 @@ public class Combat : MonoBehaviour
         }
     }
 
-    private void RangedAttack()
+    private void RangedAttack(RaycastHit hit)
     {
-        if (Input.GetMouseButtonDown(1) && CheckLineOfSight())
+        if (Input.GetMouseButtonDown(1))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+            if(hit.collider.gameObject.tag == "Enemy")
             {
-                if (hit.collider.gameObject.tag == "Enemy")
-                {
-                    Debug.Log("initiating Ranged Attack");
-                    hit.transform.GetComponent<Combat>().unitStats.strength -= 100;
-                }
+                Debug.Log("Attacking this object");
             }
         }
+        //if (Input.GetMouseButtonDown(1))
+        //{
+        //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //    RaycastHit hit;
+        //    if (Physics.Raycast(ray, out hit))
+        //    {
+        //        if (hit.collider.gameObject.tag == "Enemy")
+        //        {
+        //            Debug.Log("initiating Ranged Attack");
+        //            hit.transform.GetComponent<Combat>().unitStats.strength -= 100;
+        //        }
+        //    }
+        //}
     }
 
-    private bool CheckLineOfSight()
+    private void CheckLineOfSight()
     {
         mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         unitPosition = this.transform.position;
         RaycastHit hit;
         //playerToTargetDirection = hit.point - unitPosition;
 
-        if (Physics.Raycast(transform.position, transform.TransformDirection(new Vector3(0.5f, 0, 1)), out hit, Mathf.Infinity))
+        for (int i = 0; i < radiantArray.Length; i++)
         {
-            Debug.DrawRay(transform.position, transform.TransformDirection(new Vector3(0.5f, 0, 1)) * hit.distance, Color.yellow);
-            Debug.Log("Did Hit");
-            return true;
-        }
-        else
-        {
-            Debug.DrawRay(transform.position, transform.TransformDirection(new Vector3(0.5f, 0, 1)) * 1000, Color.white);
-            Debug.Log("Did not Hit");
-
-            return false;
+            if (Physics.Raycast(transform.position, transform.TransformDirection(new Vector3(radiantArray[i], 0, 1)), out hit, 5f))
+            {
+                Debug.DrawRay(transform.position, transform.TransformDirection(new Vector3(radiantArray[i], 0, 1)) * hit.distance, Color.yellow);
+                RangedAttack(hit);
+            }
+            else
+            {
+                Debug.DrawRay(transform.position, transform.TransformDirection(new Vector3(radiantArray[i], 0, 1)) * 5f, Color.white);
+            }
         }
     }
 }
