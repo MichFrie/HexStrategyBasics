@@ -30,6 +30,7 @@ public class UnitMovement : MonoBehaviour
     float unitMovementPoints = 10;
 
     bool isSelectingStart;
+ 
     
 
     List<int> moveList;
@@ -47,12 +48,11 @@ public class UnitMovement : MonoBehaviour
         isSelectingStart = true;
         tgs.OnCellClick += (grid, cellIndex, buttonIndex) => BuildPath(cellIndex);
         //tgs.OnCellEnter += (grid, cellIndex) => ShowLineOfSight(cellIndex);
-
     }
 
     void Update()
     {
-
+        
         if (Input.GetKeyDown(KeyCode.M))
             ShowRange(true);
         if (Input.GetKeyDown(KeyCode.R))
@@ -75,6 +75,8 @@ public class UnitMovement : MonoBehaviour
         }
         MoveSelectedUnit();
     }
+
+  
 
     private void FormLine()
     {
@@ -122,7 +124,7 @@ public class UnitMovement : MonoBehaviour
                 break;
 
             case State.MOVESELECT:
-                if (Input.GetMouseButtonUp(0))
+                if (Input.GetMouseButtonUp(0) && this.gameObject.layer == 12)
                 {   //definition of target cell
                     int targetCell = tgs.cellHighlightedIndex;
                     if (targetCell != -1)
