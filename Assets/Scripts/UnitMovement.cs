@@ -18,6 +18,13 @@ public class UnitMovement : MonoBehaviour
         COLUMN
     }
 
+    const int CELLS_ALL = -1;
+    const int CELL_DEFAULT = 1;
+    const int CELL_PLAYER = 2;
+    const int CELL_ENEMY = 4;
+    const int CELL_OBSTACLE = 8;
+    const int CELLS_ALL_NAVIGATABLE = ~(CELL_OBSTACLE | CELL_PLAYER | CELL_ENEMY);
+
     State state;
     Formation formation;
 
@@ -27,19 +34,12 @@ public class UnitMovement : MonoBehaviour
 
     int startCellIndex;
 
-    float unitMovementPoints = 10;
+    public float unitMovementPoints = 10;
 
     bool isSelectingStart;
- 
-    
 
-    List<int> moveList;
-    List<int> cellIndices;
-    List<Vector3> worldPositions;
-    List<GameObject> LOSMarkers;
-
-
-
+    List<int> moveList;  
+   
     void Start()
     {
         tgs = TerrainGridSystem.instance;
@@ -52,10 +52,13 @@ public class UnitMovement : MonoBehaviour
 
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            MarkAllGameObjects();
+        }
         if (Input.GetKeyDown(KeyCode.M))
             ShowRange(true);
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.T))
             ShowRange(false);
         if (Input.GetKeyDown(KeyCode.Q))
         {
@@ -90,6 +93,7 @@ public class UnitMovement : MonoBehaviour
         transform.localScale = new Vector3(0.7f, 0.2f, 0.7f);
         formation = Formation.COLUMN;
         unitMovementPoints -= 2f;
+        unitMovementPoints += 10f;
     }
 
     private void RotateRight()
@@ -104,7 +108,6 @@ public class UnitMovement : MonoBehaviour
 
     public void MoveSelectedUnit()
     {
-        // Check Unit state
         switch (state)
         {
             case State.IDLE:
@@ -128,7 +131,7 @@ public class UnitMovement : MonoBehaviour
                 {   //definition of target cell
                     int targetCell = tgs.cellHighlightedIndex;
                     if (targetCell != -1)
-                    {//checks if cell is selected
+                    {//check if cell is selected
                         int startCell = tgs.CellGetIndex(tgs.CellGetAtPosition(transform.position, true));
                         float totalCost;
                         //builds a path from startCell to targetCell
@@ -136,21 +139,19 @@ public class UnitMovement : MonoBehaviour
                         if (moveList == null)
                             return;
 
-                        //Debug.Log("Cell Clicked: " + targetCell + ", Total move cost: " + totalCost);
-
                         //check if path exceeds unitRange
-                        if (moveList.Count < CalculateUnitMovementPoints())
+                        if (unitMovementPoints >= totalCost)
                         {
                             moveCounter = 0;
                             state = State.MOVING;
                             unitMovementPoints -= totalCost;
                             Debug.Log("UnitMovementPoints: " + unitMovementPoints);
+                            
                         }
                         else
                         {
                             Debug.Log("Movement Range exceeded");
                         }
-
                     }
                     else
                     {
@@ -160,32 +161,15 @@ public class UnitMovement : MonoBehaviour
                 break;
         }
     }
-
-    float CalculateUnitMovementPoints()
-    {
-        if (formation == Formation.COLUMN)
-        {
-            unitMovementPoints *= 2f;
-            formation = Formation.IDLE;
-            return unitMovementPoints;
-        }
-
-        else
-        {
-            formation = Formation.IDLE;
-            return unitMovementPoints;
-        }
-    }
-
-    void Move(Vector3 in_vec)
+    void Move(Vector3 targetPos)
     {
         float speed = moveList.Count * 5f;
         float step = speed * Time.deltaTime;
 
-        transform.position = Vector3.MoveTowards(transform.position, in_vec, step);
+        transform.position = Vector3.MoveTowards(transform.position, targetPos, step);
 
         // Check if unit has reached next cell
-        float dist = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(in_vec.x, in_vec.z));
+        float dist = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPos.x, targetPos.z));
         if (dist <= 0.1f)
         {
             moveCounter++;
@@ -195,8 +179,6 @@ public class UnitMovement : MonoBehaviour
     private void BuildPath(int clickedCellIndex)
     {
         //Debug.Log("Clicked on cell " + clickedCellIndex);
-
-        DestroyLOSMarkers();
 
         if (isSelectingStart)
         {
@@ -227,45 +209,15 @@ public class UnitMovement : MonoBehaviour
 
     private void ShowRange(bool useLineOfSight = false)
     {
-        List<int> neighbours = tgs.CellGetNeighbours(tgs.cellLastClickedIndex, (int)unitMovementPoints - 1);
+        List<int> neighbours = tgs.CellGetNeighbours(tgs.cellLastClickedIndex, (int)unitMovementPoints);
         if (neighbours != null)
         {
             if (useLineOfSight)
             {
-                tgs.CellTestLineOfSight(tgs.cellHighlightedIndex, neighbours);
+                tgs.CellTestLineOfSight(tgs.cellHighlightedIndex, neighbours, CELLS_ALL_NAVIGATABLE);
             }
-            tgs.CellFlash(neighbours, Color.yellow, 5f);
+            tgs.CellFlash(neighbours, Color.yellow, 1f);
         }
-    }
-
-
-    private void ShowLineOfSight(int targetCellIndex)
-    {
-        if (isSelectingStart)
-            return;
-
-        DestroyLOSMarkers();
-
-        //Compute LOS and get list of cell indices and world positions
-        bool isLOS = tgs.CellGetLineOfSight(startCellIndex, targetCellIndex, ref cellIndices, ref worldPositions);
-
-        //Add small dots along the LOS
-        worldPositions.ForEach((Vector3 obj) => {
-            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            LOSMarkers.Add(sphere);
-            sphere.transform.position = obj;
-            sphere.transform.localScale = Vector3.one * 0.2f;
-            sphere.GetComponent<Renderer>().material.color = isLOS ? Color.green : Color.red;
-        });
-
-    }
-
-    private void DestroyLOSMarkers()
-    {
-        if (LOSMarkers == null)
-            LOSMarkers = new List<GameObject>();
-        else
-            LOSMarkers.ForEach((GameObject obj) => DestroyImmediate(obj));
     }
 
     public void PositionUnitInCenterOfCell()
@@ -274,5 +226,18 @@ public class UnitMovement : MonoBehaviour
         int cellIndex = tgs.CellGetIndex(cell);
         Bounds bounds = tgs.CellGetRectWorldSpace(cellIndex);
         transform.position = bounds.center;
+    }
+
+    private void MarkAllGameObjects()
+    {
+        GameObject[] gameobjects;
+        gameobjects = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (GameObject g in gameobjects)
+        {
+            Cell cell = tgs.CellGetAtPosition(g.transform.position, true);
+            int cellIndex = tgs.CellGetIndex(cell);
+            tgs.CellSetCrossCost(cellIndex, 12000);
+            tgs.CellSetGroup(cellIndex, CELL_ENEMY);
+        }
     }
 }

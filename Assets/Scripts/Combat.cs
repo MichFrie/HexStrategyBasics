@@ -39,7 +39,13 @@ public class Combat : MonoBehaviour
         //MeasureDistanceFromPlayer();
         //CheckLineOfSight();
 
+        //CheckRaySensorObjects();
 
+    }
+
+    void CheckRaySensorObjects()
+    {
+  
     }
 
     private void CheckWithinMeleeDistance()

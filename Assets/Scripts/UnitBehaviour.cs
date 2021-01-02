@@ -15,15 +15,26 @@ public class UnitBehaviour : MonoBehaviour
     private void Start()
     {
         tgs = TerrainGridSystem.instance;
-       
     }
 
     private void Update()
     {
-        
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.U))
         {
-            //ExtendLine();
+            MarkAllGameObjects();
+        }
+
+    }
+
+    private void MarkAllGameObjects()
+    {
+        GameObject[] gameobjects;
+        gameobjects = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach(GameObject g in gameobjects)
+        {
+            Cell cell = tgs.CellGetAtPosition(g.transform.position, true);
+            int cellIndex = tgs.CellGetIndex(cell);
+            tgs.CellSetCrossCost(cellIndex, 12000);
         }
     }
 

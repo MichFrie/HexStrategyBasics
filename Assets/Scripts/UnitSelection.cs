@@ -6,12 +6,6 @@ public class UnitSelection : MonoBehaviour
 
     GameObject unitInstance;
     GameObject[] allUnits;
-    void Start()
-    {
-        
-    }
-
-
 
     void Update()
     {
@@ -22,6 +16,7 @@ public class UnitSelection : MonoBehaviour
             allUnits = GameObject.FindGameObjectsWithTag("Player");
             foreach (GameObject unit in allUnits)
                 unit.layer = 11;
+
         }
           
     }
@@ -41,19 +36,3 @@ public class UnitSelection : MonoBehaviour
         }
     }
 }
-
-
-
-
-
-
-//Legacy Code
-
-//OLD METHOD FOR UNIT SELECTION
-//Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-//RaycastHit hit;
-//if (Physics.Raycast(ray, out hit))
-//{
-//    if ((hit.collider.gameObject.tag == "Enemy") || hit.collider.gameObject.tag == "Unit")
-//        return;
-//}
