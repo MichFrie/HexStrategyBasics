@@ -57,9 +57,9 @@ public class UnitMovement : MonoBehaviour
             MarkAllGameObjects();
         }
         if (Input.GetKeyDown(KeyCode.M))
-            ShowRange(true);
+            ShowLineOfSight();
         if (Input.GetKeyDown(KeyCode.T))
-            ShowRange(false);
+            ShowMovementRange();
         if (Input.GetKeyDown(KeyCode.Q))
         {
             RotateLeft();
@@ -207,17 +207,28 @@ public class UnitMovement : MonoBehaviour
         isSelectingStart = !isSelectingStart;
     }
 
-    private void ShowRange(bool useLineOfSight = false)
+    private void ShowMovementRange()
     {
         List<int> neighbours = tgs.CellGetNeighbours(tgs.cellLastClickedIndex, (int)unitMovementPoints);
+       
         if (neighbours != null)
         {
-            if (useLineOfSight)
-            {
-                tgs.CellTestLineOfSight(tgs.cellHighlightedIndex, neighbours, CELLS_ALL_NAVIGATABLE);
-            }
             tgs.CellFlash(neighbours, Color.yellow, 1f);
         }
+    }
+
+    private void ShowLineOfSight()
+    {
+        List<int> neighbours = tgs.CellGetNeighbours(tgs.cellLastClickedIndex, 10);
+        if(neighbours != null)
+        {
+            int group1 = tgs.CellGetGroup(1);
+            int group2 = tgs.CellGetGroup(2);
+            tgs.CellTestLineOfSight(tgs.cellHighlightedIndex, neighbours, group2);
+            tgs.CellFlash(neighbours, Color.red, 1f);
+        }
+        
+
     }
 
     public void PositionUnitInCenterOfCell()
