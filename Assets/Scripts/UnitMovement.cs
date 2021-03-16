@@ -1,21 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TGS;
 using UnityEngine;
 
 public class UnitMovement : MonoBehaviour
 {
-    enum State
+    enum STATE
     {
         IDLE,
         MOVING,
         MOVESELECT
     }
 
-    enum Formation
+    enum FORMATION
     {
         IDLE,
         LINE,
         COLUMN
+    }
+
+    enum FRONTS
+    {
+        FrontOFCell, 
+        BackOfCell, 
+        TopLeftOfCell, 
+        TopRightOfCell, 
+        BottomLeftOfCell, 
+        BottomRightOfCell
     }
 
     const int CELLS_ALL = -1;
@@ -25,8 +36,8 @@ public class UnitMovement : MonoBehaviour
     const int CELL_OBSTACLE = 8;
     const int CELLS_ALL_NAVIGATABLE = ~(CELL_OBSTACLE | CELL_PLAYER | CELL_ENEMY);
 
-    State state;
-    Formation formation;
+    STATE state;
+    FORMATION formation;
 
     TerrainGridSystem tgs;
 
@@ -43,8 +54,8 @@ public class UnitMovement : MonoBehaviour
     void Start()
     {
         tgs = TerrainGridSystem.instance;
-        state = State.MOVESELECT;
-        formation = Formation.IDLE;
+        state = STATE.MOVESELECT;
+        formation = FORMATION.IDLE;
         isSelectingStart = true;
         tgs.OnCellClick += (grid, cellIndex, buttonIndex) => BuildPath(cellIndex);
         //tgs.OnCellEnter += (grid, cellIndex) => ShowLineOfSight(cellIndex);
@@ -76,22 +87,30 @@ public class UnitMovement : MonoBehaviour
         {
             FormColumn();
         }
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            DefineFrontFacing();
+        }
         MoveSelectedUnit();
     }
 
-  
+    private void DefineFrontFacing()
+    {
+        int cellIndex = tgs.CellGetNeighbour(tgs.cellLastClickedIndex, CELL_SIDE.Bottom);
+        tgs.CellFlash(cellIndex, Color.cyan, 1f);
+    }
 
     private void FormLine()
     {
         transform.localScale = new Vector3(0.2f, 0.2f, 1f);
-        formation = Formation.LINE;
+        formation = FORMATION.LINE;
         unitMovementPoints -= 2f;
     }
 
     private void FormColumn()
     {
         transform.localScale = new Vector3(0.7f, 0.2f, 0.7f);
-        formation = Formation.COLUMN;
+        formation = FORMATION.COLUMN;
         unitMovementPoints -= 2f;
         unitMovementPoints += 10f;
     }
@@ -99,6 +118,12 @@ public class UnitMovement : MonoBehaviour
     private void RotateRight()
     {
         transform.rotation *= Quaternion.Euler(0, 60, 0);
+        int angle = Mathf.Abs((int)transform.eulerAngles.y);
+        
+        if(angle == 60)
+        {
+            CheckAnglesFor60();
+        }
     }
 
     private void RotateLeft()
@@ -110,10 +135,10 @@ public class UnitMovement : MonoBehaviour
     {
         switch (state)
         {
-            case State.IDLE:
+            case STATE.IDLE:
                 break;
 
-            case State.MOVING:
+            case STATE.MOVING:
                 if (moveCounter < moveList.Count)
                 {
                     Move(tgs.CellGetPosition(moveList[moveCounter]));
@@ -121,12 +146,12 @@ public class UnitMovement : MonoBehaviour
                 else
                 {
                     moveCounter = 0;
-                    state = State.MOVESELECT;
+                    state = STATE.MOVESELECT;
                     PositionUnitInCenterOfCell();
                 }
                 break;
 
-            case State.MOVESELECT:
+            case STATE.MOVESELECT:
                 if (Input.GetMouseButtonUp(0) && this.gameObject.layer == 12)
                 {   //definition of target cell
                     int targetCell = tgs.cellHighlightedIndex;
@@ -143,7 +168,7 @@ public class UnitMovement : MonoBehaviour
                         if (unitMovementPoints >= totalCost)
                         {
                             moveCounter = 0;
-                            state = State.MOVING;
+                            state = STATE.MOVING;
                             unitMovementPoints -= totalCost;
                             Debug.Log("UnitMovementPoints: " + unitMovementPoints);
                             
@@ -226,9 +251,7 @@ public class UnitMovement : MonoBehaviour
             int group2 = tgs.CellGetGroup(2);
             tgs.CellTestLineOfSight(tgs.cellHighlightedIndex, neighbours, group2);
             tgs.CellFlash(neighbours, Color.red, 1f);
-        }
-        
-
+        }       
     }
 
     public void PositionUnitInCenterOfCell()
@@ -250,5 +273,30 @@ public class UnitMovement : MonoBehaviour
             tgs.CellSetCrossCost(cellIndex, 12000);
             tgs.CellSetGroup(cellIndex, CELL_ENEMY);
         }
+    }
+
+    void CheckZoneOfControl()
+    {
+        List<int> cellIndexNew = tgs.CellGetNeighboursWithinRange(tgs.cellLastClickedIndex, 0,1);
+        foreach(var item in cellIndexNew)
+        {
+            tgs.CellFlash(item, Color.cyan, 1f);
+        }
+    }
+
+    void CheckAnglesFor60()
+    {
+        
+        Cell cell = tgs.CellGetAtPosition(transform.position, true);
+        
+        int row = cell.row;
+        int column = cell.column;
+        
+
+        Cell backOfCell = tgs.CellGetAtPosition(column - 1, row);
+        Cell frontOfCell = tgs.CellGetAtPosition(column, row + 1);
+        
+        tgs.CellColorTemp(backOfCell, Color.red, 3f);
+        tgs.CellColorTemp(frontOfCell, Color.red, 3f);
     }
 }

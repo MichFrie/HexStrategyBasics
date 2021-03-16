@@ -35,7 +35,5 @@ public class UnitDrag : MonoBehaviour
 		Cell cell = tgs.CellGetAtPosition(unitPosition, true);
 		int row = cell.row;
 		int column = cell.column;
-		
     }
-
 }

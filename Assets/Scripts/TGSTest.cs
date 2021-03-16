@@ -13,6 +13,9 @@ public class TGSTest : MonoBehaviour
     private Vector3 unitPosition;
     private Vector3 playerToTargetDirection;
     TerrainGridSystem tgs;
+    List<int> cellIndices;
+    Bounds bounds;
+
     void Start()
     {
         tgs = TerrainGridSystem.instance;
@@ -20,6 +23,13 @@ public class TGSTest : MonoBehaviour
     }
 
     private void Update()
+    {
+        //BackupCombatMethod();
+    }
+
+   
+
+    private void BackupCombatMethod()
     {
         mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 

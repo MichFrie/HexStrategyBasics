@@ -7,6 +7,7 @@ using TGS;
 public class UnitPositions : MonoBehaviour
 {
     TerrainGridSystem tgs;
+    public Transform target;
 
     void Start()
     {
@@ -20,6 +21,5 @@ public class UnitPositions : MonoBehaviour
         int cellIndex = tgs.CellGetIndex(cell);
         Bounds bounds = tgs.CellGetRectWorldSpace(cellIndex);
         transform.position = bounds.center;
-        
     }
 }
