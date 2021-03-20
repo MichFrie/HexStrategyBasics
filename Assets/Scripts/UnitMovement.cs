@@ -19,7 +19,7 @@ public class UnitMovement : MonoBehaviour
         COLUMN
     }
 
-    enum FRONTS
+    enum CellSides
     {
         FrontOFCell, 
         BackOfCell, 
@@ -35,6 +35,13 @@ public class UnitMovement : MonoBehaviour
     const int CELL_ENEMY = 4;
     const int CELL_OBSTACLE = 8;
     const int CELLS_ALL_NAVIGATABLE = ~(CELL_OBSTACLE | CELL_PLAYER | CELL_ENEMY);
+
+    public Cell backOfCell;
+    public Cell frontOfCell;
+    public Cell topLeftOfCell;
+    public Cell topRightOfCell;
+    public Cell bottomLeftOfCell;
+    public Cell bottomRightOfCell;
 
     STATE state;
     FORMATION formation;
@@ -68,9 +75,13 @@ public class UnitMovement : MonoBehaviour
             MarkAllGameObjects();
         }
         if (Input.GetKeyDown(KeyCode.M))
+        {
             ShowLineOfSight();
+        }
         if (Input.GetKeyDown(KeyCode.T))
+        {
             ShowMovementRange();
+        }
         if (Input.GetKeyDown(KeyCode.Q))
         {
             RotateLeft();
@@ -90,6 +101,10 @@ public class UnitMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.O))
         {
             DefineFrontFacing();
+        }
+        if ((Input.GetKeyDown(KeyCode.I)))
+        { 
+            ShowCellSide();
         }
         MoveSelectedUnit();
     }
@@ -118,7 +133,6 @@ public class UnitMovement : MonoBehaviour
     void RotateRight()
     {
         transform.rotation *= Quaternion.Euler(0, 60, 0);
-        DisplayFronts();
     }
 
 
@@ -128,15 +142,15 @@ public class UnitMovement : MonoBehaviour
         transform.rotation *= Quaternion.Euler(0, -60, 0);
     }    
     
-    void DisplayFronts()
+    public void CalculateCellSide()
     {
         int angle = Mathf.Abs((int)transform.eulerAngles.y);
-
+        
         switch (angle)
         {
             case 0: CheckAnglesFor0(); break;
             case 60: CheckAnglesFor60(); break;
-            case 120: CheckAnglesFor120();  break;
+            case 120: CheckAnglesFor120(); break;
             case 180: CheckAnglesFor180(); break;
             case 240: CheckAnglesFor240(); break;
             case 300: CheckAnglesFor300(); break;
@@ -144,6 +158,17 @@ public class UnitMovement : MonoBehaviour
         }
     }
 
+    void ShowCellSide()
+    {
+        CalculateCellSide();
+
+        tgs.CellColorTemp(frontOfCell, Color.green, 3f);
+        tgs.CellColorTemp(topLeftOfCell, Color.green, 3f);
+        tgs.CellColorTemp(topRightOfCell, Color.green, 3f);
+        tgs.CellColorTemp(backOfCell, Color.red, 3f);
+        tgs.CellColorTemp(bottomLeftOfCell, Color.red, 3f);
+        tgs.CellColorTemp(bottomRightOfCell, Color.red, 3f);
+    }
 
     public void MoveSelectedUnit()
     {
@@ -311,19 +336,12 @@ public class UnitMovement : MonoBehaviour
         int row = cell.row;
         int column = cell.column;
 
-        Cell backOfCell = tgs.CellGetAtPosition(column, row - 1);
-        Cell frontOfCell = tgs.CellGetAtPosition(column, row + 1);
-        Cell topLeftOfCell = tgs.CellGetAtPosition(column - 1, row + 1);
-        Cell topRightOfCell = tgs.CellGetAtPosition(column + 1, row + 1);
-        Cell bottomLeftOfCell = tgs.CellGetAtPosition(column - 1, row);
-        Cell bottomRightOfCell = tgs.CellGetAtPosition(column + 1, row);
-
-        tgs.CellColorTemp(backOfCell, Color.red, 3f);
-        tgs.CellColorTemp(frontOfCell, Color.blue, 3f);
-        tgs.CellColorTemp(topLeftOfCell, Color.yellow, 3f);
-        tgs.CellColorTemp(topRightOfCell, Color.green, 3f);
-        tgs.CellColorTemp(bottomLeftOfCell, Color.black, 3f);
-        tgs.CellColorTemp(bottomRightOfCell, Color.cyan, 3f);
+        backOfCell = tgs.CellGetAtPosition(column, row - 1);
+        frontOfCell = tgs.CellGetAtPosition(column, row + 1);
+        topLeftOfCell = tgs.CellGetAtPosition(column -1, row + 1);
+        topRightOfCell = tgs.CellGetAtPosition(column + 1, row + 1);
+        bottomLeftOfCell = tgs.CellGetAtPosition(column - 1, row);
+        bottomRightOfCell = tgs.CellGetAtPosition(column + 1, row);
     }
 
 
@@ -334,19 +352,12 @@ public class UnitMovement : MonoBehaviour
         int row = cell.row;
         int column = cell.column;
 
-        Cell backOfCell = tgs.CellGetAtPosition(column - 1, row);
-        Cell frontOfCell = tgs.CellGetAtPosition(column + 1, row + 1);
-        Cell topLeftOfCell = tgs.CellGetAtPosition(column, row + 1);
-        Cell topRightOfCell = tgs.CellGetAtPosition(column + 1, row);
-        Cell bottomLeftOfCell = tgs.CellGetAtPosition(column - 1, row + 1);
-        Cell bottomRightOfCell = tgs.CellGetAtPosition(column, row -1);
-        
-        tgs.CellColorTemp(backOfCell, Color.red, 3f);
-        tgs.CellColorTemp(frontOfCell, Color.blue, 3f);
-        tgs.CellColorTemp(topLeftOfCell, Color.yellow, 3f);
-        tgs.CellColorTemp(topRightOfCell, Color.green, 3f);
-        tgs.CellColorTemp(bottomLeftOfCell, Color.black, 3f);
-        tgs.CellColorTemp(bottomRightOfCell, Color.cyan, 3f);
+        backOfCell = tgs.CellGetAtPosition(column - 1, row);
+        frontOfCell = tgs.CellGetAtPosition(column + 1, row + 1);
+        topLeftOfCell = tgs.CellGetAtPosition(column, row + 1);
+        topRightOfCell = tgs.CellGetAtPosition(column + 1, row);
+        bottomLeftOfCell = tgs.CellGetAtPosition(column - 1, row + 1);
+        bottomRightOfCell = tgs.CellGetAtPosition(column, row -1);
     }
 
     void CheckAnglesFor120()
@@ -356,19 +367,12 @@ public class UnitMovement : MonoBehaviour
         int row = cell.row;
         int column = cell.column;
 
-        Cell backOfCell = tgs.CellGetAtPosition(column - 1, row + 1);
-        Cell frontOfCell = tgs.CellGetAtPosition(column + 1, row);
-        Cell topLeftOfCell = tgs.CellGetAtPosition(column + 1, row + 1);
-        Cell topRightOfCell = tgs.CellGetAtPosition(column, row - 1);
-        Cell bottomLeftOfCell = tgs.CellGetAtPosition(column, row + 1);
-        Cell bottomRightOfCell = tgs.CellGetAtPosition(column - 1, row);
-
-        tgs.CellColorTemp(backOfCell, Color.red, 3f);
-        tgs.CellColorTemp(frontOfCell, Color.blue, 3f);
-        tgs.CellColorTemp(topLeftOfCell, Color.yellow, 3f);
-        tgs.CellColorTemp(topRightOfCell, Color.green, 3f);
-        tgs.CellColorTemp(bottomLeftOfCell, Color.black, 3f);
-        tgs.CellColorTemp(bottomRightOfCell, Color.cyan, 3f);
+        backOfCell = tgs.CellGetAtPosition(column - 1, row + 1);
+        frontOfCell = tgs.CellGetAtPosition(column + 1, row);
+        topLeftOfCell = tgs.CellGetAtPosition(column + 1, row + 1);
+        topRightOfCell = tgs.CellGetAtPosition(column, row - 1);
+        bottomLeftOfCell = tgs.CellGetAtPosition(column, row + 1);
+        bottomRightOfCell = tgs.CellGetAtPosition(column - 1, row);
     }  
     void CheckAnglesFor180()
     {
@@ -377,19 +381,12 @@ public class UnitMovement : MonoBehaviour
         int row = cell.row;
         int column = cell.column;
 
-        Cell backOfCell = tgs.CellGetAtPosition(column, row + 1);
-        Cell frontOfCell = tgs.CellGetAtPosition(column, row - 1);
-        Cell topLeftOfCell = tgs.CellGetAtPosition(column + 1, row);
-        Cell topRightOfCell = tgs.CellGetAtPosition(column - 1, row);
-        Cell bottomLeftOfCell = tgs.CellGetAtPosition(column + 1, row + 1);
-        Cell bottomRightOfCell = tgs.CellGetAtPosition(column - 1, row + 1);
-
-        tgs.CellColorTemp(backOfCell, Color.red, 3f);
-        tgs.CellColorTemp(frontOfCell, Color.blue, 3f);
-        tgs.CellColorTemp(topLeftOfCell, Color.yellow, 3f);
-        tgs.CellColorTemp(topRightOfCell, Color.green, 3f);
-        tgs.CellColorTemp(bottomLeftOfCell, Color.black, 3f);
-        tgs.CellColorTemp(bottomRightOfCell, Color.cyan, 3f);
+        backOfCell = tgs.CellGetAtPosition(column, row + 1);
+        frontOfCell = tgs.CellGetAtPosition(column, row - 1);
+        topLeftOfCell = tgs.CellGetAtPosition(column + 1, row);
+        topRightOfCell = tgs.CellGetAtPosition(column - 1, row);
+        bottomLeftOfCell = tgs.CellGetAtPosition(column + 1, row + 1);
+        bottomRightOfCell = tgs.CellGetAtPosition(column - 1, row + 1);
     }
 
     void CheckAnglesFor240()
@@ -399,19 +396,12 @@ public class UnitMovement : MonoBehaviour
         int row = cell.row;
         int column = cell.column;
 
-        Cell backOfCell = tgs.CellGetAtPosition(column + 1, row + 1);
-        Cell frontOfCell = tgs.CellGetAtPosition(column - 1, row);
-        Cell topLeftOfCell = tgs.CellGetAtPosition(column, row - 1);
-        Cell topRightOfCell = tgs.CellGetAtPosition(column - 1, row + 1);
-        Cell bottomLeftOfCell = tgs.CellGetAtPosition(column + 1, row);
-        Cell bottomRightOfCell = tgs.CellGetAtPosition(column, row + 1);
-
-        tgs.CellColorTemp(backOfCell, Color.red, 3f);
-        tgs.CellColorTemp(frontOfCell, Color.blue, 3f);
-        tgs.CellColorTemp(topLeftOfCell, Color.yellow, 3f);
-        tgs.CellColorTemp(topRightOfCell, Color.green, 3f);
-        tgs.CellColorTemp(bottomLeftOfCell, Color.black, 3f);
-        tgs.CellColorTemp(bottomRightOfCell, Color.cyan, 3f);
+        backOfCell = tgs.CellGetAtPosition(column + 1, row + 1);
+        frontOfCell = tgs.CellGetAtPosition(column - 1, row);
+        topLeftOfCell = tgs.CellGetAtPosition(column, row - 1);
+        topRightOfCell = tgs.CellGetAtPosition(column - 1, row + 1);
+        bottomLeftOfCell = tgs.CellGetAtPosition(column + 1, row);
+        bottomRightOfCell = tgs.CellGetAtPosition(column, row + 1);
     }
     void CheckAnglesFor300()
     {
@@ -420,22 +410,11 @@ public class UnitMovement : MonoBehaviour
         int row = cell.row;
         int column = cell.column;
 
-        Cell backOfCell = tgs.CellGetAtPosition(column + 1, row);
-        Cell frontOfCell = tgs.CellGetAtPosition(column - 1, row + 1);
-        Cell topLeftOfCell = tgs.CellGetAtPosition(column - 1, row);
-        Cell topRightOfCell = tgs.CellGetAtPosition(column, row + 1);
-        Cell bottomLeftOfCell = tgs.CellGetAtPosition(column, row - 1);
-        Cell bottomRightOfCell = tgs.CellGetAtPosition(column + 1, row + 1);
-
-        tgs.CellColorTemp(backOfCell, Color.red, 3f);
-        tgs.CellColorTemp(frontOfCell, Color.blue, 3f);
-        tgs.CellColorTemp(topLeftOfCell, Color.yellow, 3f);
-        tgs.CellColorTemp(topRightOfCell, Color.green, 3f);
-        tgs.CellColorTemp(bottomLeftOfCell, Color.black, 3f);
-        tgs.CellColorTemp(bottomRightOfCell, Color.cyan, 3f);
-    }
-
-
-
-  
+        backOfCell = tgs.CellGetAtPosition(column + 1, row);
+        frontOfCell = tgs.CellGetAtPosition(column - 1, row + 1);
+        topLeftOfCell = tgs.CellGetAtPosition(column - 1, row);
+        topRightOfCell = tgs.CellGetAtPosition(column, row + 1);
+        bottomLeftOfCell = tgs.CellGetAtPosition(column, row - 1);
+        bottomRightOfCell = tgs.CellGetAtPosition(column + 1, row + 1);
+    }  
 }
