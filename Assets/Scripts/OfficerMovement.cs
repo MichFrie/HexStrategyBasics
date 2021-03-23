@@ -1,9 +1,9 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
-using TGS;
 using UnityEngine;
+using TGS;
 
-public class UnitMovement : MonoBehaviour
+public class OfficerMovement : MonoBehaviour
 {
     enum STATE
     {
@@ -21,11 +21,11 @@ public class UnitMovement : MonoBehaviour
 
     enum CellSides
     {
-        FrontOFCell, 
-        BackOfCell, 
-        TopLeftOfCell, 
-        TopRightOfCell, 
-        BottomLeftOfCell, 
+        FrontOFCell,
+        BackOfCell,
+        TopLeftOfCell,
+        TopRightOfCell,
+        BottomLeftOfCell,
         BottomRightOfCell
     }
 
@@ -56,8 +56,10 @@ public class UnitMovement : MonoBehaviour
 
     bool isSelectingStart;
 
-    List<int> moveList;  
-   
+    public List<GameObject> unitList;
+
+    List<int> moveList;
+
     void Start()
     {
         tgs = TerrainGridSystem.instance;
@@ -66,6 +68,8 @@ public class UnitMovement : MonoBehaviour
         isSelectingStart = true;
         tgs.OnCellClick += (grid, cellIndex, buttonIndex) => BuildPath(cellIndex);
         //tgs.OnCellEnter += (grid, cellIndex) => ShowLineOfSight(cellIndex);
+
+        unitList = new List<GameObject>();
     }
 
     void Update()
@@ -82,30 +86,19 @@ public class UnitMovement : MonoBehaviour
         {
             ShowMovementRange();
         }
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            RotateLeft();
-        }
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            RotateRight();
-        }
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            FormLine();
-        }
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            FormColumn();
-        }
         if (Input.GetKeyDown(KeyCode.O))
         {
             DefineFrontFacing();
         }
         if ((Input.GetKeyDown(KeyCode.I)))
-        { 
+        {
             ShowCellSide();
         }
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            GetAllUnitsInRange(transform.position, 4f);
+        }
+
         MoveSelectedUnit();
     }
 
@@ -130,22 +123,10 @@ public class UnitMovement : MonoBehaviour
         unitMovementPoints += 10f;
     }
 
-    void RotateRight()
-    {
-        transform.rotation *= Quaternion.Euler(0, 60, 0);
-    }
-
-
-
-    void RotateLeft()
-    {
-        transform.rotation *= Quaternion.Euler(0, -60, 0);
-    }    
-    
     public void CalculateCellSide()
     {
         int angle = Mathf.Abs((int)transform.eulerAngles.y);
-        
+
         switch (angle)
         {
             case 0: CheckAnglesFor0(); break;
@@ -210,7 +191,7 @@ public class UnitMovement : MonoBehaviour
                             state = STATE.MOVING;
                             unitMovementPoints -= totalCost;
                             Debug.Log("UnitMovementPoints: " + unitMovementPoints);
-                            
+
                         }
                         else
                         {
@@ -274,7 +255,7 @@ public class UnitMovement : MonoBehaviour
     void ShowMovementRange()
     {
         List<int> neighbours = tgs.CellGetNeighbours(tgs.cellLastClickedIndex, (int)unitMovementPoints);
-       
+
         if (neighbours != null)
         {
             tgs.CellFlash(neighbours, Color.yellow, 1f);
@@ -284,13 +265,13 @@ public class UnitMovement : MonoBehaviour
     void ShowLineOfSight()
     {
         List<int> neighbours = tgs.CellGetNeighbours(tgs.cellLastClickedIndex, 10);
-        if(neighbours != null)
+        if (neighbours != null)
         {
             int group1 = tgs.CellGetGroup(1);
             int group2 = tgs.CellGetGroup(2);
             tgs.CellTestLineOfSight(tgs.cellHighlightedIndex, neighbours, group2);
             tgs.CellFlash(neighbours, Color.red, 1f);
-        }       
+        }
     }
 
     public void PositionUnitInCenterOfCell()
@@ -316,8 +297,8 @@ public class UnitMovement : MonoBehaviour
 
     void CheckZoneOfControl()
     {
-        List<int> cellIndexNew = tgs.CellGetNeighboursWithinRange(tgs.cellLastClickedIndex, 0,1);
-        foreach(var item in cellIndexNew)
+        List<int> cellIndexNew = tgs.CellGetNeighboursWithinRange(tgs.cellLastClickedIndex, 0, 1);
+        foreach (var item in cellIndexNew)
         {
             tgs.CellFlash(item, Color.cyan, 1f);
         }
@@ -332,7 +313,7 @@ public class UnitMovement : MonoBehaviour
 
         backOfCell = tgs.CellGetAtPosition(column, row - 1);
         frontOfCell = tgs.CellGetAtPosition(column, row + 1);
-        topLeftOfCell = tgs.CellGetAtPosition(column -1, row + 1);
+        topLeftOfCell = tgs.CellGetAtPosition(column - 1, row + 1);
         topRightOfCell = tgs.CellGetAtPosition(column + 1, row + 1);
         bottomLeftOfCell = tgs.CellGetAtPosition(column - 1, row);
         bottomRightOfCell = tgs.CellGetAtPosition(column + 1, row);
@@ -342,7 +323,7 @@ public class UnitMovement : MonoBehaviour
     void CheckAnglesFor60()
     {
         Cell cell = tgs.CellGetAtPosition(transform.position, true);
-        
+
         int row = cell.row;
         int column = cell.column;
 
@@ -351,7 +332,7 @@ public class UnitMovement : MonoBehaviour
         topLeftOfCell = tgs.CellGetAtPosition(column, row + 1);
         topRightOfCell = tgs.CellGetAtPosition(column + 1, row);
         bottomLeftOfCell = tgs.CellGetAtPosition(column - 1, row + 1);
-        bottomRightOfCell = tgs.CellGetAtPosition(column, row -1);
+        bottomRightOfCell = tgs.CellGetAtPosition(column, row - 1);
     }
 
     void CheckAnglesFor120()
@@ -367,7 +348,7 @@ public class UnitMovement : MonoBehaviour
         topRightOfCell = tgs.CellGetAtPosition(column, row - 1);
         bottomLeftOfCell = tgs.CellGetAtPosition(column, row + 1);
         bottomRightOfCell = tgs.CellGetAtPosition(column - 1, row);
-    }  
+    }
     void CheckAnglesFor180()
     {
         Cell cell = tgs.CellGetAtPosition(transform.position, true);
@@ -410,5 +391,15 @@ public class UnitMovement : MonoBehaviour
         topRightOfCell = tgs.CellGetAtPosition(column, row + 1);
         bottomLeftOfCell = tgs.CellGetAtPosition(column, row - 1);
         bottomRightOfCell = tgs.CellGetAtPosition(column + 1, row + 1);
-    }  
+    }
+
+    void GetAllUnitsInRange(Vector3 center, float radius)
+    {
+        //Consider using Physics.OverlapSphereNonAlloc instead.
+        Collider[] hitColliders = Physics.OverlapSphere(center, radius);
+        foreach(var hitCollider in hitColliders)
+        {
+            Debug.Log(hitCollider.name);
+        }
+    }
 }

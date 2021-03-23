@@ -4,26 +4,17 @@ using UnityEngine;
 public class Combat : MonoBehaviour
 {
     TerrainGridSystem tgs;
-    UnitMovement unitMovement;
-    public UnitStats unitStats;
+    UnitHealth unitHealth;
 
-    public int strength;
     int attackingUnit;
     int defendingUnit;
-
-    Ray mouseRay;
-
-    RaycastHit hit;
-    RaycastHit targetRayHit;
-
-    Vector3 unitPosition;
-    Vector3 playerToTargetDirection;
-
-    Quaternion unitRotation;
-
-    Vector3 currentViewRadius;
     int unitMaxFovAngle = 70;
-    int maxRange = 3; 
+    int maxRange = 3;
+
+    void Awake()
+    {
+        unitHealth = GetComponent<UnitHealth>();   
+    }
 
     void Start()
     {
@@ -39,7 +30,7 @@ public class Combat : MonoBehaviour
 
     void CheckAngleToTarget()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonUp(1))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -65,13 +56,14 @@ public class Combat : MonoBehaviour
         {
             Vector3 unitPosition = this.transform.position;
             Vector3 targetPosition = hit.transform.position;
+            Transform target = hit.transform;
             attackingUnit = tgs.CellGetIndex(tgs.CellGetAtPosition(unitPosition, true));
             defendingUnit = tgs.CellGetIndex(tgs.CellGetAtPosition(targetPosition, true));
 
             int distanceToTarget = tgs.CellGetHexagonDistance(attackingUnit, defendingUnit);
-            if(distanceToTarget <= maxRange)
+            if (distanceToTarget <= maxRange)
             {
-                RangedAttack();
+                RangedAttack(target);
             }
             else
             {
@@ -79,34 +71,13 @@ public class Combat : MonoBehaviour
             }
         }
 
-        void RangedAttack()
+        void RangedAttack(Transform target)
         {
-            Debug.Log("Initiating ranged attack");
+            Debug.Log("Attacking---");
+            target.GetComponent<UnitHealth>().Damage();
+       
         }
     }
-    //if (angleBetweenUnits < unitMaxFovAngle)
-    //{
-    //    //if (Input.GetMouseButtonDown(1))
-    //    //{
-    //    Debug.Log(targetRayHit);
-    //    if (Physics.SphereCast(unitPosition, 1f, playerToTargetDirection.normalized, out targetRayHit, 6f))
-    //    {
-    //        if (targetRayHit.collider.gameObject.tag == "Enemy")
-    //        {
-    //            Debug.DrawRay(unitPosition, playerToTargetDirection.normalized * targetRayHit.distance, Color.yellow);
-    //            Debug.Log("Attack now");
-    //            return true;
-
-    //        }
-    //        else
-    //        {
-    //            Debug.Log("No attack possible");
-    //            return false;
-    //        }
-    //    }
-    //    Debug.Log("Out of sight");
-    //    return false;
-
 
 
     //    if (Physics.Raycast(mouseRay.origin, playerToTargetDirection, out hit))
@@ -118,9 +89,6 @@ public class Combat : MonoBehaviour
     //    }
     //    return false;
     //}
-
-
-
 
 
     //private void CheckWithinMeleeDistance()
