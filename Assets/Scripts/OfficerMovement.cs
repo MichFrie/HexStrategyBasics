@@ -399,7 +399,18 @@ public class OfficerMovement : MonoBehaviour
         Collider[] hitColliders = Physics.OverlapSphere(center, radius);
         foreach(var hitCollider in hitColliders)
         {
-            Debug.Log(hitCollider.name);
+            if (hitCollider.transform.CompareTag("Player"))
+            {
+                unitList.Add(hitCollider.transform.gameObject);
+            }
         }
+        List<int> cellsInRange = tgs.CellGetNeighbours(tgs.cellLastClickedIndex, 4);
+        tgs.CellFlash(cellsInRange, Color.red, 3f);
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, 4);
     }
 }
