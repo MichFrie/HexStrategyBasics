@@ -19,7 +19,7 @@ public class UnitMovement : MonoBehaviour
         COLUMN
     }
 
-    enum CellSides
+    enum CELLSIDES
     {
         FrontOFCell, 
         BackOfCell, 
@@ -27,6 +27,12 @@ public class UnitMovement : MonoBehaviour
         TopRightOfCell, 
         BottomLeftOfCell, 
         BottomRightOfCell
+    }
+
+    public enum UNITSELECTION
+    {
+        SELECTED, 
+        NOT_SELECTED
     }
 
     const int CELLS_ALL = -1;
@@ -45,14 +51,16 @@ public class UnitMovement : MonoBehaviour
 
     STATE state;
     FORMATION formation;
+    UNITSELECTION selection;
 
     TerrainGridSystem tgs;
+    UnitStats stats;
 
     short moveCounter;
 
     int startCellIndex;
 
-    public float unitMovementPoints = 10;
+    public float unitMovementPoints;
 
     bool isSelectingStart;
 
@@ -61,6 +69,10 @@ public class UnitMovement : MonoBehaviour
     void Start()
     {
         tgs = TerrainGridSystem.instance;
+
+        stats = ScriptableObject.CreateInstance<UnitStats>();
+        unitMovementPoints = stats.movementPoints;
+
         state = STATE.MOVESELECT;
         formation = FORMATION.IDLE;
         isSelectingStart = true;

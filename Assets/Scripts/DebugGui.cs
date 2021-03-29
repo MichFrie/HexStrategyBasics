@@ -18,8 +18,8 @@ public class DebugGui : MonoBehaviour
     void OnGUI()
     {
         //textFieldString = GUI.TextArea(new Rect(10, 40, 200, 30), "cell Index" + tgs.cellLastClickedIndex.ToString());
-        textFieldString = GUI.TextArea(new Rect(10, 40, 200, 30), "cell Row" + tgs.CellGetRow(tgs.cellLastClickedIndex).ToString());
-        textFieldString = GUI.TextArea(new Rect(10, 90, 200, 30), "cell Column" + tgs.CellGetColumn(tgs.cellLastClickedIndex).ToString());
+        textFieldString = GUI.TextArea(new Rect(10, 90, 200, 30), "cell Row" + tgs.CellGetRow(tgs.cellLastClickedIndex).ToString());
+        textFieldString = GUI.TextArea(new Rect(10, 130, 200, 30), "cell Column" + tgs.CellGetColumn(tgs.cellLastClickedIndex).ToString());
         //textFieldNew = GUI.TextArea(new Rect(10, 90, 200, 30), "cell Index" + tgs.CellGetPosition);
     }
 }

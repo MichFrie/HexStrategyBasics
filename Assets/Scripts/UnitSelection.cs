@@ -7,6 +7,14 @@ public class UnitSelection : MonoBehaviour
     GameObject unitInstance;
     GameObject[] allUnits;
 
+    UnitStatsDisplay unitStatsDisplay;
+
+    void Start()
+    {
+        unitStatsDisplay = GetComponent<UnitStatsDisplay>();    
+    }
+
+
     void Update()
     {
         SelectUnit();
@@ -16,7 +24,6 @@ public class UnitSelection : MonoBehaviour
             allUnits = GameObject.FindGameObjectsWithTag("Player");
             foreach (GameObject unit in allUnits)
                 unit.layer = 11;
-
         }
           
     }
@@ -32,6 +39,11 @@ public class UnitSelection : MonoBehaviour
             {
                 unitInstance = hit.collider.gameObject;
                 unitInstance.layer = 12;
+            }
+            if(unitStatsDisplay != null)
+            {
+                GameObject go = hit.transform.gameObject;
+                go.GetComponent<UnitStatsDisplay>().DisplayUnitStatsOnGui();
             }
         }
     }
