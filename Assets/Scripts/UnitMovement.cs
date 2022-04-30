@@ -54,13 +54,14 @@ public class UnitMovement : MonoBehaviour
     UNITSELECTION selection;
 
     TerrainGridSystem tgs;
-    UnitStats stats;
+   
+    public UnitStats stats;
 
     short moveCounter;
 
     int startCellIndex;
 
-    public float unitMovementPoints;
+    float unitMovementPoints;
 
     bool isSelectingStart;
 
@@ -70,14 +71,20 @@ public class UnitMovement : MonoBehaviour
     {
         tgs = TerrainGridSystem.instance;
 
-        stats = ScriptableObject.CreateInstance<UnitStats>();
-        unitMovementPoints = stats.movementPoints;
-
+        //stats = ScriptableObject.CreateInstance<UnitStats>();
+        unitMovementPoints = GetUnitMovementPoints();
+        //unitMovementPoints = 10;
+        
         state = STATE.MOVESELECT;
         formation = FORMATION.IDLE;
         isSelectingStart = true;
         tgs.OnCellClick += (grid, cellIndex, buttonIndex) => BuildPath(cellIndex);
         //tgs.OnCellEnter += (grid, cellIndex) => ShowLineOfSight(cellIndex);
+    }
+
+    float GetUnitMovementPoints()
+    {
+        return stats.movementPoints;
     }
 
     void Update()
@@ -131,15 +138,12 @@ public class UnitMovement : MonoBehaviour
     {
         transform.localScale = new Vector3(0.2f, 0.2f, 1f);
         formation = FORMATION.LINE;
-        unitMovementPoints -= 2f;
     }
 
     void FormColumn()
     {
         transform.localScale = new Vector3(0.7f, 0.2f, 0.7f);
         formation = FORMATION.COLUMN;
-        unitMovementPoints -= 2f;
-        unitMovementPoints += 10f;
     }
 
     void RotateRight()
@@ -284,8 +288,10 @@ public class UnitMovement : MonoBehaviour
     }
 
     void ShowMovementRange()
-    {
-        List<int> neighbours = tgs.CellGetNeighbours(tgs.cellLastClickedIndex, (int)unitMovementPoints);
+    {        
+        Cell cell = tgs.CellGetAtPosition(transform.position, true);
+        int cellIndex = tgs.CellGetIndex(cell);
+        List<int> neighbours = tgs.CellGetNeighbours(cellIndex, (int)unitMovementPoints);
        
         if (neighbours != null)
         {

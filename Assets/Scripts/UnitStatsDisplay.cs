@@ -13,8 +13,8 @@ public class UnitStatsDisplay : MonoBehaviour
 
     public void DisplayUnitStatsOnGui()
     {
-        this.unitName.text = $"Name: {this.unitStats.name}";
-        this.unitStrength.text = $"Strength: {(this.unitStats.strength).ToString()}";
+        this.unitName.text = $"Name: {(this.unitStats.name).ToString()}";
+        this.unitStrength.text = $"Strength: {this.unitStats.strength}";
         this.unitMovementPoints.text = $"Movement Points: {this.unitStats.movementPoints}";
     }
 }

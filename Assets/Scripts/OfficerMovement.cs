@@ -82,10 +82,10 @@ public class OfficerMovement : MonoBehaviour
         {
             ShowLineOfSight();
         }
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            ShowMovementRange();
-        }
+        // if (Input.GetKeyDown(KeyCode.T))
+        // {
+        //     ShowMovementRange();
+        // }
         if (Input.GetKeyDown(KeyCode.O))
         {
             DefineFrontFacing();
@@ -112,15 +112,12 @@ public class OfficerMovement : MonoBehaviour
     {
         transform.localScale = new Vector3(0.2f, 0.2f, 1f);
         formation = FORMATION.LINE;
-        unitMovementPoints -= 2f;
     }
 
     void FormColumn()
     {
         transform.localScale = new Vector3(0.7f, 0.2f, 0.7f);
         formation = FORMATION.COLUMN;
-        unitMovementPoints -= 2f;
-        unitMovementPoints += 10f;
     }
 
     public void CalculateCellSide()
