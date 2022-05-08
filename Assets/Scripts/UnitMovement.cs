@@ -19,16 +19,17 @@ public class UnitMovement : MonoBehaviour
         COLUMN
     }
 
-    enum CELLSIDES
+    enum FACING
     {
-        FrontOFCell, 
-        BackOfCell, 
-        TopLeftOfCell, 
-        TopRightOfCell, 
-        BottomLeftOfCell, 
-        BottomRightOfCell
+        Facing0,
+        Facing60,
+        Facing120,
+        Facing180,
+        Facing240,
+        Facing300
     }
-
+    
+    [SerializeField] FACING facing;
     public enum UNITSELECTION
     {
         SELECTED, 
@@ -48,6 +49,13 @@ public class UnitMovement : MonoBehaviour
     public Cell topRightOfCell;
     public Cell bottomLeftOfCell;
     public Cell bottomRightOfCell;
+    
+    public Cell targetPoint_Front;
+    public Cell targetPoint_FrontRight;
+    public Cell targetPoint_FrontLeft;
+    public Cell targetPoint_Back;
+    public Cell targetPoint_BackLef;
+    public Cell targetPoint_BackRight;
 
     STATE state;
     FORMATION formation;
@@ -61,11 +69,15 @@ public class UnitMovement : MonoBehaviour
 
     int startCellIndex;
 
+    public int coneSlider = 95;
+
     float unitMovementPoints;
 
     bool isSelectingStart;
 
-    List<int> moveList;  
+    List<int> moveList;
+
+    public Cell targetPoint;
    
     void Start()
     {
@@ -77,6 +89,7 @@ public class UnitMovement : MonoBehaviour
         
         state = STATE.MOVESELECT;
         formation = FORMATION.IDLE;
+        facing = FACING.Facing0;
         isSelectingStart = true;
         tgs.OnCellClick += (grid, cellIndex, buttonIndex) => BuildPath(cellIndex);
         //tgs.OnCellEnter += (grid, cellIndex) => ShowLineOfSight(cellIndex);
@@ -84,6 +97,7 @@ public class UnitMovement : MonoBehaviour
 
     float GetUnitMovementPoints()
     {
+        print(stats.movementPoints);
         return stats.movementPoints;
     }
 
@@ -91,7 +105,7 @@ public class UnitMovement : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.U))
         {
-            MarkAllGameObjects();
+            GetUnitMovementPoints();
         }
         if (Input.GetKeyDown(KeyCode.M))
         {
@@ -125,6 +139,12 @@ public class UnitMovement : MonoBehaviour
         { 
             ShowCellSide();
         }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            GetConeViaTargetPoint();
+            tgs.CellFlash(targetPoint, Color.magenta, 2);
+        }
         MoveSelectedUnit();
     }
 
@@ -149,6 +169,7 @@ public class UnitMovement : MonoBehaviour
     void RotateRight()
     {
         transform.rotation *= Quaternion.Euler(0, 60, 0);
+        CalculateCellSide();
     }
 
 
@@ -156,6 +177,7 @@ public class UnitMovement : MonoBehaviour
     void RotateLeft()
     {
         transform.rotation *= Quaternion.Euler(0, -60, 0);
+        CalculateCellSide();
     }    
     
     public void CalculateCellSide()
@@ -164,12 +186,24 @@ public class UnitMovement : MonoBehaviour
         
         switch (angle)
         {
-            case 0: CheckAnglesFor0(); break;
-            case 60: CheckAnglesFor60(); break;
-            case 120: CheckAnglesFor120(); break;
-            case 180: CheckAnglesFor180(); break;
-            case 240: CheckAnglesFor240(); break;
-            case 300: CheckAnglesFor300(); break;
+            case 0: CheckAnglesFor0();
+                facing = FACING.Facing0;
+                break;
+            case 60: CheckAnglesFor60();
+                facing = FACING.Facing60;
+                break;
+            case 120: CheckAnglesFor120();
+                facing = FACING.Facing120;
+                break;
+            case 180: CheckAnglesFor180();
+                facing = FACING.Facing180;
+                break;
+            case 240: CheckAnglesFor240();
+                facing = FACING.Facing240;
+                break;
+            case 300: CheckAnglesFor300();
+                facing = FACING.Facing300;
+                break;
             default: break;
         }
     }
@@ -428,5 +462,77 @@ public class UnitMovement : MonoBehaviour
         topRightOfCell = tgs.CellGetAtPosition(column, row + 1);
         bottomLeftOfCell = tgs.CellGetAtPosition(column, row - 1);
         bottomRightOfCell = tgs.CellGetAtPosition(column + 1, row + 1);
-    }  
+    }
+
+    void GetConeViaTargetPoint()
+    {
+        List<int> coneIndices = new List<int>();
+        Cell cell = tgs.CellGetAtPosition(transform.position, true);
+        int cellIndex = tgs.CellGetIndex(cell);
+        CalculateConesViaTargetPoints();
+        int targetCellIndex = tgs.CellGetIndex(targetPoint);
+        tgs.GetCellsWithinCone(cellIndex, targetCellIndex,  coneSlider, coneIndices);
+
+        foreach (var c in coneIndices)
+        {
+            tgs.CellFlash(c, Color.cyan, 2f);
+            
+        }
+    }
+
+    void GetConeViaVectorAngle()
+    {
+        
+        List<int> coneIndices = new List<int>();
+        Cell cell = tgs.CellGetAtPosition(transform.position, true);
+        int cellIndex = tgs.CellGetIndex(cell);
+        List<Cell> cells = tgs.cells;
+        tgs.CellGetWithinCone(cellIndex, Vector2.right, 5f, 95, coneIndices);
+       
+        
+        foreach (var c in coneIndices)
+        {
+            tgs.CellFlash(c, Color.cyan, 2f);
+            print(c.ToString());
+        }
+    }   
+
+    void OnDrawGizmos()
+         {
+             Gizmos.color = Color.red;
+             Gizmos.DrawRay(transform.position, Vector2.right * 3);
+         }
+
+    void CalculateConesViaTargetPoints()
+    {
+        Cell cell = tgs.CellGetAtPosition(transform.position, true);
+
+        int row = cell.row;
+        int column = cell.column;
+
+        switch (facing)
+        {
+            case FACING.Facing0: targetPoint = tgs.CellGetAtPosition(column, row +3);
+                break;
+            case FACING.Facing60: targetPoint = tgs.CellGetAtPosition(column + 3, row + 2);
+                break;
+            case FACING.Facing120: targetPoint = tgs.CellGetAtPosition(column + 3, row - 1);
+                break;
+            case FACING.Facing180: targetPoint = tgs.CellGetAtPosition(column, row - 3);
+                break;
+            case FACING.Facing240: targetPoint = tgs.CellGetAtPosition(column - 3, row - 1);
+                break;
+            case FACING.Facing300: targetPoint = tgs.CellGetAtPosition(column - 3, row + 2);
+                break;
+                
+            default: break;
+        }
+
+        // targetPoint_Front = tgs.CellGetAtPosition(column, row +3);
+        // targetPoint_FrontLeft = tgs.CellGetAtPosition(column - 3, row + 2);
+        // targetPoint_FrontRight = tgs.CellGetAtPosition(column + 3, row + 2);
+        // targetPoint_Back = tgs.CellGetAtPosition(column, row - 3);
+        // targetPoint_BackLef = tgs.CellGetAtPosition(column - 3, row - 1);
+        // targetPoint_BackRight = tgs.CellGetAtPosition(column + 3, row - 1);
+    }
 }
