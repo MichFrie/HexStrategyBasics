@@ -68,8 +68,8 @@ public class UnitMovement : MonoBehaviour
     short moveCounter;
 
     int startCellIndex;
-
-    public int coneSlider = 95;
+    
+    int cone = 95;
 
     float unitMovementPoints;
 
@@ -142,8 +142,8 @@ public class UnitMovement : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.B))
         {
-            GetConeViaTargetPoint();
-            tgs.CellFlash(targetPoint, Color.magenta, 2);
+            //GetConeViaTargetPoint();
+            GetConeViaVectorAngle();
         }
         MoveSelectedUnit();
     }
@@ -169,7 +169,7 @@ public class UnitMovement : MonoBehaviour
     void RotateRight()
     {
         transform.rotation *= Quaternion.Euler(0, 60, 0);
-        CalculateCellSide();
+        CalculateFacing();
     }
 
 
@@ -177,10 +177,10 @@ public class UnitMovement : MonoBehaviour
     void RotateLeft()
     {
         transform.rotation *= Quaternion.Euler(0, -60, 0);
-        CalculateCellSide();
+        CalculateFacing();
     }    
     
-    public void CalculateCellSide()
+    public void CalculateFacing()
     {
         int angle = Mathf.Abs((int)transform.eulerAngles.y);
         
@@ -210,7 +210,7 @@ public class UnitMovement : MonoBehaviour
 
     void ShowCellSide()
     {
-        CalculateCellSide();
+        CalculateFacing();
 
         tgs.CellColorTemp(frontOfCell, Color.green, 3f);
         tgs.CellColorTemp(topLeftOfCell, Color.green, 3f);
@@ -471,7 +471,7 @@ public class UnitMovement : MonoBehaviour
         int cellIndex = tgs.CellGetIndex(cell);
         CalculateConesViaTargetPoints();
         int targetCellIndex = tgs.CellGetIndex(targetPoint);
-        tgs.GetCellsWithinCone(cellIndex, targetCellIndex,  coneSlider, coneIndices);
+        tgs.GetCellsWithinCone(cellIndex, targetCellIndex,  cone, coneIndices);
 
         foreach (var c in coneIndices)
         {
@@ -482,27 +482,25 @@ public class UnitMovement : MonoBehaviour
 
     void GetConeViaVectorAngle()
     {
-        
         List<int> coneIndices = new List<int>();
         Cell cell = tgs.CellGetAtPosition(transform.position, true);
         int cellIndex = tgs.CellGetIndex(cell);
-        List<Cell> cells = tgs.cells;
-        tgs.CellGetWithinCone(cellIndex, Vector2.right, 5f, 95, coneIndices);
+
+        Vector2 startPos = tgs.cells[cellIndex].center;
+        Vector2 endPos = tgs.cells[tgs.cellLastClickedIndex].center;
+        Vector2 direction = endPos - startPos;
+        float maxDistance = Vector2.Distance(startPos, endPos);
+        direction /= maxDistance;
+        tgs.CellGetWithinCone(cellIndex, direction, maxDistance, 60.0f, coneIndices);
+
        
         
         foreach (var c in coneIndices)
         {
             tgs.CellFlash(c, Color.cyan, 2f);
-            print(c.ToString());
         }
     }   
-
-    void OnDrawGizmos()
-         {
-             Gizmos.color = Color.red;
-             Gizmos.DrawRay(transform.position, Vector2.right * 3);
-         }
-
+    
     void CalculateConesViaTargetPoints()
     {
         Cell cell = tgs.CellGetAtPosition(transform.position, true);
@@ -527,12 +525,5 @@ public class UnitMovement : MonoBehaviour
                 
             default: break;
         }
-
-        // targetPoint_Front = tgs.CellGetAtPosition(column, row +3);
-        // targetPoint_FrontLeft = tgs.CellGetAtPosition(column - 3, row + 2);
-        // targetPoint_FrontRight = tgs.CellGetAtPosition(column + 3, row + 2);
-        // targetPoint_Back = tgs.CellGetAtPosition(column, row - 3);
-        // targetPoint_BackLef = tgs.CellGetAtPosition(column - 3, row - 1);
-        // targetPoint_BackRight = tgs.CellGetAtPosition(column + 3, row - 1);
     }
 }
